@@ -1,7 +1,7 @@
-#include "register.hpp"
+#include "emu.hpp"
 
 int main (int		argc,
 	  const	char **	argv)
 {
-  return 1;
+  return pbg_emu_run(argc, argv);
 }
