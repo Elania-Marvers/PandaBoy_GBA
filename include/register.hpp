@@ -1,46 +1,47 @@
 #ifndef		___REGISTER_HPP___
 #define		___REGISTER_HPP___
+#include "common.hpp"
 
 typedef struct		s_register
 {
   union
   {
     struct {
-      unsigned char	a;
-      unsigned char	f;
+      uint8_t	a;
+      uint8_t	f;
     };
-    unsigned short	af;
+    uint16_t	af;
   };
 
   union
   {
     struct {
-      unsigned char	b;
-      unsigned char	c;
+      uint8_t	b;
+      uint8_t	c;
     };
-    unsigned short	bc;
+    uint16_t	bc;
   };
 
   union
   {
     struct {
-      unsigned char	d;
-      unsigned char	e;
+      uint8_t	d;
+      uint8_t	e;
     };
-    unsigned short	de;
+    uint16_t	de;
   };
 
   union
   {
     struct {
-      unsigned char	l;
-      unsigned char	h;
+      uint8_t	l;
+      uint8_t	h;
     };
-    unsigned short	hl;
+    uint16_t	hl;
   };
   
-  unsigned short	sp;
-  unsigned short	pc;
+  uint16_t	sp;
+  uint16_t	pc;
   
     
 }			t_register;
