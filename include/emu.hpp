@@ -25,7 +25,8 @@ namespace pandaboygba
     void	setTicks(uint64_t);
     void	loadCart(char *);
 
-    gba_emulator();
+		gba_emulator();
+		~gba_emulator();
 
   };
 };

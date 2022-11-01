@@ -8,15 +8,13 @@ using namespace pandaboygba;
 int pbg_emu_run (int		argc,
 		 const	char **	argv)
 {
-  if (argc < 2) {
-    std::cout << "🎮 Usage: " << argv[0] << " <rom_file>" << std::endl;
-    return -1;
-  }
-
-  
+  if (argc < 2)
+    {
+      std::cout << "🎮 Usage: " << argv[0] << " <rom_file>" << std::endl;
+      return -1;
+    }
   gba_emulator *gba = new gba_emulator();
-
-
+  gba->loadCart((char *) argv[1]);
   delete gba;
   return 0;
 }
@@ -28,6 +26,15 @@ gba_emulator::gba_emulator()
   : _paused(false), _running(true), _ticks(0), _cart(NULL)
 {
   std::cout << "🎮 " << RED << "[" << ORANGE << "Running Emulator!" << RED << "]" << DEFAULT << " 🎮" << std::endl;
+}
+
+gba_emulator::~gba_emulator()
+{
+  if (this->_cart != NULL)
+    {
+      delete this->_cart;
+      this->_cart = NULL;
+    }
 }
 
 /*********************************************************/
@@ -76,7 +83,13 @@ void	gba_emulator::setTicks(uint64_t state)
 void	gba_emulator::loadCart(char *cart)
 {
   if (this->_cart != NULL)
-    delete this->_cart;
+    {
+      delete this->_cart;
+      this->_cart = NULL;
+    }
   this->_cart = new pbg_cart();
-  this->_cart->cart_load(cart);
+  if (this->_cart == NULL)
+    return;
+
+  (this->getCart())->cart_load(cart);
 }
