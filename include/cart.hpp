@@ -3,6 +3,8 @@
 #include "common.hpp"
 #include <cstring>
 #include <map>
+#include <fstream>
+#include <iomanip>
 
 #pragma once
 
