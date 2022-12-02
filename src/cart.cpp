@@ -117,6 +117,15 @@ bool		pbg_cart::cart_load(const char *cart)
   std::cout << std::tab << "ROM VERSION" << std::tab << ":" << std::tab << std::setfill('0') << std::hex << std::setw(2) << std::setprecision(2) << static_cast<unsigned int>(this->_rom_header->version) << std::endl;
   // RESET PRINT METHODS
   std::cout.copyfmt(init);
+
+  uint16_t x = 0;
+  for (uint16_t i = 0x0134; i <= 0x014C; i++)
+    {
+      x = x - this->_rom_data[i] - 1;
+    }
+
+  // CARTRIDGE CHECKSUM
+  std::cout << std::tab << "CHECKSUM" << std::tab << ":" << std::tab << std::setfill('0') << std::hex << std::setw(2) << std::setprecision(2) << static_cast<unsigned int>(this->_rom_header->checksum) << " (" << ((x & 0xFF) ? "PASSED" : "FAILED") << ")" << std::endl;
   return true;
 }
 

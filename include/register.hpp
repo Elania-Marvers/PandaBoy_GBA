@@ -42,7 +42,6 @@ typedef struct		s_register
   
   uint16_t	sp;
   uint16_t	pc;
-  
     
 }			t_register;
 

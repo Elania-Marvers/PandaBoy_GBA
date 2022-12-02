@@ -7,7 +7,6 @@
 #include <iomanip>
 
 #pragma once
-
 typedef struct		s_rom_header{
   uint8_t		entry[4];
   uint8_t		logo[0x30]; // 48bits !
@@ -23,7 +22,6 @@ typedef struct		s_rom_header{
   uint8_t		checksum;
   uint16_t		global_checksum;
 }			t_rom_header;
-
 
 namespace pandaboygba
 {
@@ -56,6 +54,5 @@ namespace pandaboygba
     const char *        cart_type_name();
   };
 }
-
 
 #endif
