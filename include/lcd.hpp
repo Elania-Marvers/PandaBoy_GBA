@@ -1,5 +1,5 @@
-#ifndef		___DMA_HPP___
-#define		___DMA_HPP___
+#ifndef		___LCD_HPP___
+#define		___LCD_HPP___
 #include "common.hpp"
 #include "context.hpp"
 
@@ -7,12 +7,12 @@ using namespace pandaboygba;
 namespace pandaboygba
 {
   class pbg_context;
-  class  pbg_dma
+  class  pbg_lcd
   {
   private:
     pbg_context *		_context_ptr;
   public:
-    pbg_dma(pbg_context *);
+    pbg_lcd(pbg_context *);
   };
 }
 

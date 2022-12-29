@@ -27,8 +27,9 @@ int pbg_emu_run (int		argc,
 /**	These function is emulator constructor		**/
 /*********************************************************/
 gba_emulator::gba_emulator()
-  : _window(sf::VideoMode(800, 800, 32), "Emulator"), _paused(false), _running(true), _ticks(0), _cart(NULL)
+  : _window(sf::VideoMode(800, 800, 32), "Emulator"), _paused(false), _running(true), _ticks(0)
 {
+  this->_context = new pbg_context();
   std::cout << "🎮 " << RED << "[" << ORANGE << "Running Emulator!" << RED << "]" << DEFAULT << " 🎮" << std::endl;
   _window.setVerticalSyncEnabled(true);
   _window.setFramerateLimit(60);
@@ -36,13 +37,7 @@ gba_emulator::gba_emulator()
 
 gba_emulator::~gba_emulator()
 {
-  /*
-  if (this->_cart != NULL)
-    {
-      delete this->_cart;
-      this->_cart = NULL;
-    }
-  */
+  delete this->_context;
 }
 
 /*********************************************************/
@@ -64,9 +59,9 @@ uint64_t	gba_emulator::getTicks()	const
   return this->_ticks;
 }
 
-pbg_cart *	gba_emulator::getCart()	const
+pbg_context& 	gba_emulator::getContext()      
 {
-  return this->_cart;
+  return *(this->_context);
 }
 
 sf::RenderWindow& gba_emulator::get_window(void)
@@ -96,17 +91,16 @@ void	gba_emulator::setTicks(uint64_t state)
 void	gba_emulator::loadCart(char *cart)
 {
   /*
-  if (this->_cart != NULL)
+  if ((this->getContext())._cart_ptr != NULL)
     {
-      delete this->_cart;
-      this->_cart = NULL;
+      delete (this->getContext())._cart_ptr;
+      (this->getContext())._cart_ptr = NULL;
     }
-  this->_cart = new pbg_cart();
-  if (this->_cart == NULL)
-    return;
-
-  (this->getCart())->cart_load(cart);
+  (this->getContext())._cart_ptr = new pbg_cart();
+  if ((this->getContext())._cart_ptr == NULL)
+    return; // Throw an exception !
   */
+  this->getContext()._cart_ptr->cart_load(cart);
 }
 
 void gba_emulator::event()

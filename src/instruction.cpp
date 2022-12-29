@@ -1,7 +1,8 @@
 #include "instruction.hpp"
 
 using namespace pandaboygba;
-pbg_instruction::pbg_instruction()
+pbg_instruction::pbg_instruction(pbg_context *ctx)
+  : _context_ptr(ctx)
 {
   this->_instructions.insert({
       {0x00, {IN_NOP, AM_IMP}},

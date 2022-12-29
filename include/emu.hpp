@@ -3,12 +3,12 @@
 #include <SFML/Graphics.hpp>
 #include "common.hpp"
 #include "context.hpp"
+#include "cart.hpp"
 
 using namespace pandaboygba;
 namespace pandaboygba
 {
   class pbg_context;
-  class pbg_cart;
   
   class gba_emulator
   {
@@ -17,18 +17,17 @@ namespace pandaboygba
     bool		_paused;	// This represent if the emulator is un pause
     bool		_running;	// This represent if the emulator is running
     uint64_t		_ticks;		// This represent the emulator ticks
-    pbg_context *	_context;	// This represent the cartrige
-    pbg_cart *		_cart;		// This represent the cartrige
+    pbg_context *	_context;	// This represent the context
     void (*_main_loop)(gba_emulator *);	// This is the main event loop
     void (*_event_loop)(gba_emulator *);// This is the event input loop
     
     
   public:
-    bool	getPaused()	const;
-    bool	getRunning()	const;
-    uint64_t	getTicks()	const;
-    pbg_cart *	getCart()	const;
-    sf::RenderWindow& get_window(void);
+    bool		getPaused()	const;
+    bool		getRunning()	const;
+    uint64_t		getTicks()	const;
+    pbg_context&	getContext();
+    sf::RenderWindow&	get_window(void);
     
     void	setPaused(bool);
     void	setRunning(void);

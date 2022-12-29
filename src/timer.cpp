@@ -7,8 +7,8 @@ using namespace pandaboygba;
 /**	pbg_timer class					**/
 /*********************************************************/
 
-pbg_timer::pbg_timer()
-  : _div(0xAC00)
+pbg_timer::pbg_timer(pbg_context *ctx)
+  : _context_ptr(ctx), _div(0xAC00)
 {
 
 }

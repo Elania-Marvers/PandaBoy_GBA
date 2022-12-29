@@ -6,8 +6,13 @@
 using namespace pandaboygba;
 namespace pandaboygba
 {
+  class  pbg_context;
   class  pbg_gamepad
   {
+  private:
+    pbg_context *		_context_ptr;
+  public:
+    pbg_gamepad(pbg_context *);
   };
 }
 

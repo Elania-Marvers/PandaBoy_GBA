@@ -2,22 +2,41 @@
 #define		___CONTEXT_HPP___
 #include "common.hpp"
 
+#include "cpu.hpp"
+#include "bus.hpp"
+#include "cart.hpp"
+#include "ram.hpp"
+#include "io.hpp"
+#include "ppu.hpp"
+#include "dma.hpp"
+#include "timer.hpp"
+#include "instruction.hpp"
+#include "stack.hpp"
+#include "lcd.hpp"
+#include "gamepad.hpp"
+
+
 namespace pandaboygba
 {
   class pbg_cpu;
-  class pbg_ppu;
-  class pbg_io;
-  class pbg_ram;
-  class pbg_stack;
   class pbg_bus;
-  class pbg_timer;
-  class pbg_dma;
   class pbg_cart;
+  class pbg_ram;
+  class pbg_io;
+  class pbg_ppu;
+  class pbg_dma;
+  class pbg_timer;
   class pbg_instruction;
+  class pbg_stack;
+  class pbg_lcd;
+  class pbg_gamepad;
+
   
   class pbg_context
   {
   public:
+    pbg_context();
+    ~pbg_context();
     pbg_cpu *		_cpu_ptr;
     pbg_bus *		_bus_ptr;
     pbg_cart *		_cart_ptr;
@@ -27,8 +46,9 @@ namespace pandaboygba
     pbg_dma *		_dma_ptr;
     pbg_timer *		_timer_ptr;
     pbg_instruction *	_instruction_ptr;
-    pandaboygba::pbg_stack *		_stack_ptr;
-    
+    pbg_stack *		_stack_ptr;
+    pbg_lcd *		_lcd_ptr;
+    pbg_gamepad *	_gamepad_ptr;
   };
 }
   

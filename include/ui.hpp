@@ -8,6 +8,10 @@ namespace pandaboygba
 {
   class  pbg_ui
   {
+  private:
+    pbg_context *		_context_ptr;
+  public:
+    pbg_ui(pbg_context *);
   };
 }
 

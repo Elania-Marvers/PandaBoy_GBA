@@ -27,8 +27,8 @@ uint8_t	*	pbg_cart::GetRomData()	const
 }
 
 
-pbg_cart::pbg_cart()
-  :_rom_data(NULL)
+pbg_cart::pbg_cart(pbg_context *ctx)
+  : _context_ptr(ctx), _rom_data(NULL)
 {
   std::cout << "🎮 " << RED << "[" << ORANGE << "Loading a cartrige" << RED << "]" << DEFAULT << " 🎮" << std::endl;
 
@@ -132,7 +132,6 @@ bool		pbg_cart::cart_load(const char *cart)
   if (this->_battery) {
     this->cart_battery_load();
   }
-
   return true;
 }
 

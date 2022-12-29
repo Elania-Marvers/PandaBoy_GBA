@@ -21,7 +21,7 @@ pbg_cpu::pbg_cpu(pbg_context	*ctx)
   this->_int_flags = 0;
   this->_int_master_enabled = false;
   this->_enabling_ime = false;
-  //  this->_context_ptr->_timer_ptr->timer_get_context()->div = 0xABCC;
+  this->_context_ptr->_timer_ptr->timer_get_context()->_div = 0xABCC;
 }
 
 bool pbg_cpu::cpu_step() {
@@ -30,7 +30,7 @@ bool pbg_cpu::cpu_step() {
 }
 
 void pbg_cpu::fetch_instruction() {
-  //  this->_cur_opcode = this->_context_ptr->_bus_ptr->bus_read(this->_regs.pc++);
+  this->_cur_opcode = this->_context_ptr->_bus_ptr->bus_read(this->_regs.pc++);
   this->_cur_inst = this->_context_ptr->_instruction_ptr->instruction_by_opcode(this->_cur_opcode);
 }
 

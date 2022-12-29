@@ -7,7 +7,9 @@ using namespace pandaboygba;
 /**	pbg_ppu class					**/
 /*********************************************************/
 
-pbg_ppu::pbg_ppu() {
+pbg_ppu::pbg_ppu(pbg_context *ctx)
+  : _context_ptr(ctx)
+{
 
 }
 

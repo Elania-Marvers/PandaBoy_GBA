@@ -25,7 +25,7 @@ typedef struct		s_rom_header{
 
 namespace pandaboygba
 {
-  
+  class pbg_context;  
   class  pbg_cart
   {
   private:
@@ -45,8 +45,7 @@ namespace pandaboygba
     bool				_need_save;		//should save battery backup.
     std::map<int, std::string>		_licency_code;
     std::map<int, std::string>	        _rom_type;
-
-
+    pbg_context *		_context_ptr;
   private:
     const char *	cart_lic_name();
     const char *        cart_type_name();
@@ -65,7 +64,7 @@ namespace pandaboygba
     void		setRomSize(uint32_t);
     void		setRomData(uint8_t *);
     
-    pbg_cart();
+    pbg_cart(pbg_context *);
     ~pbg_cart();
     
     bool		cart_load(const char *);
