@@ -11,8 +11,17 @@ namespace pandaboygba
   {
   private:
     pbg_context *		_context_ptr;
+    bool active;
+    uint8_t byte;
+    uint8_t value;
+    uint8_t start_delay;
+
   public:
     pbg_dma(pbg_context *);
+    void dma_start(uint8_t start);
+    void dma_tick();
+    bool dma_transferring();
+    
   };
 }
 

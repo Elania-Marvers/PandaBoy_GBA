@@ -10,7 +10,7 @@ pbg_io::pbg_io(pbg_context *ctx)
   
 }
 
-uint8_t io_read(uint16_t address) {
+uint8_t pbg_io::io_read(uint16_t address) {
   if (address == 0xFF00)
     return this->_context_ptr->_gamepad_ptr->gamepad_get_output();
   if (address == 0xFF01)
@@ -29,7 +29,7 @@ uint8_t io_read(uint16_t address) {
   return 0;
 }
 
-void io_write(uint16_t address, uint8_t value) {
+void pbg_io::io_write(uint16_t address, uint8_t value) {
   if (address == 0xFF00) {
     this->_context_ptr->_gamepad_ptr->gamepad_set_sel(value);
     return;

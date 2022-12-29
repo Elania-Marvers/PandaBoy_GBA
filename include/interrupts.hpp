@@ -6,17 +6,18 @@
 using namespace pandaboygba;
 namespace pandaboygba
 {
-  typedef enum {
-    IT_VBLANK = 1,
-    IT_LCD_STAT = 2,
-    IT_TIMER = 4,
-    IT_SERIAL = 8,
-    IT_JOYPAD = 16
-  } interrupt_type;
-  /*
-  void cpu_request_interrupt(interrupt_type t);
-  void cpu_handle_interrupts(pbg_context *ctx);
-  */
+
+  class pbg_interrupts
+  {
+  private:
+    pbg_context *_context_ptr;
+  public:
+    pbg_interrupts(pbg_context *);
+    bool int_check(uint16_t address, interrupt_type it);
+    void cpu_request_interrupt(interrupt_type t);
+    void cpu_handle_interrupts();
+    void int_handle(uint16_t address);
+  };
 }
 
 #endif

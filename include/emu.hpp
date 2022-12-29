@@ -16,6 +16,7 @@ namespace pandaboygba
     sf::RenderWindow	_window;	// This represent the window of sfml
     bool		_paused;	// This represent if the emulator is un pause
     bool		_running;	// This represent if the emulator is running
+    bool		_die;		// This is the die xD
     uint64_t		_ticks;		// This represent the emulator ticks
     pbg_context *	_context;	// This represent the context
     void (*_main_loop)(gba_emulator *);	// This is the main event loop
@@ -40,6 +41,7 @@ namespace pandaboygba
     void	set_event_loop(void (*fptr)(gba_emulator *));
     void	display(void);
     void	window_stop(void);
+    void	emu_cycles(int);
     
 		gba_emulator();
 		~gba_emulator();

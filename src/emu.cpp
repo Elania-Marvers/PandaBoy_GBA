@@ -29,7 +29,7 @@ int pbg_emu_run (int		argc,
 gba_emulator::gba_emulator()
   : _window(sf::VideoMode(800, 800, 32), "Emulator"), _paused(false), _running(true), _ticks(0)
 {
-  this->_context = new pbg_context();
+  this->_context = new pbg_context(this);
   std::cout << "🎮 " << RED << "[" << ORANGE << "Running Emulator!" << RED << "]" << DEFAULT << " 🎮" << std::endl;
   _window.setVerticalSyncEnabled(true);
   _window.setFramerateLimit(60);
@@ -137,4 +137,18 @@ void gba_emulator::window_stop(void)
 void gba_emulator::delay(uint32_t time)
 {
   sf::sleep(sf::milliseconds(time));
+}
+
+void gba_emulator::emu_cycles(int cpu_cycles)
+{
+  for (int i = 0; i < cpu_cycles; i++)
+    {
+      for (int n = 0; n < 4; n++)
+	{
+	  this->_ticks++;
+	  this->_context->_timer_ptr->timer_tick();
+	  this->_context->_ppu_ptr->ppu_tick();
+        }
+      this->_context->_dma_ptr->dma_tick();
+    }
 }

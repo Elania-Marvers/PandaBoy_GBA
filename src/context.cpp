@@ -2,7 +2,8 @@
 
 using namespace pandaboygba;
 
-pbg_context::pbg_context()
+pbg_context::pbg_context(gba_emulator *emu_ptr)
+  : _emu_ptr(emu_ptr)
 {
   this->_cpu_ptr = new pbg_cpu(this);
   this->_bus_ptr = new pbg_bus(this);
@@ -16,6 +17,8 @@ pbg_context::pbg_context()
   this->_stack_ptr = new pbg_stack(this);
   this->_lcd_ptr = new pbg_lcd(this);
   this->_gamepad_ptr = new pbg_gamepad(this);
+  this->_dbg_ptr = new pbg_dbg(this);
+  this->_interrupts_ptr = new pbg_interrupts(this);
 }
 
 pbg_context::~pbg_context()
@@ -32,4 +35,6 @@ pbg_context::~pbg_context()
   delete this->_stack_ptr;
   delete this->_lcd_ptr;
   delete this->_gamepad_ptr;
+  delete this->_dbg_ptr;
+  delete this->_interrupts_ptr;
 }

@@ -2,6 +2,7 @@
 #define		___COMMON_HPP___
 #include <iostream>
 #include <cstdint>
+#include "enum.hpp"
 
 #define DEFAULT "\033[00m"
 #define RED "\033[0;31m"
