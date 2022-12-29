@@ -20,6 +20,12 @@
 #define LCYAN "\033[1;36m"
 #define WHITE "\033[1;37m"   
 
+#define BIT(a, n) ((a & (1 << n)) ? 1 : 0)
+#define BIT_SET(a, n, on) { if (on) a |= (1 << n); else a &= ~(1 << n);}
+#define BETWEEN(a, b, c) ((a >= b) && (a <= c))
+
+#define NO_IMPL { fprintf(stderr, "NOT YET IMPLEMENTED\n"); exit(-5); }
+
 namespace std {
   template <typename _CharT, typename _Traits>
   inline basic_ostream<_CharT, _Traits> &

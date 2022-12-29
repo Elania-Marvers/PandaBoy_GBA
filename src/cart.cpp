@@ -118,6 +118,8 @@ bool		pbg_cart::cart_load(const char *cart)
   // RESET PRINT METHODS
   std::cout.copyfmt(init);
 
+  this->cart_setup_banking();
+  
   uint16_t x = 0;
   for (uint16_t i = 0x0134; i <= 0x014C; i++)
     {
@@ -126,6 +128,11 @@ bool		pbg_cart::cart_load(const char *cart)
 
   // CARTRIDGE CHECKSUM
   std::cout << std::tab << "CHECKSUM" << std::tab << ":" << std::tab << std::setfill('0') << std::hex << std::setw(2) << std::setprecision(2) << static_cast<unsigned int>(this->_rom_header->checksum) << " (" << ((x & 0xFF) ? "PASSED" : "FAILED") << ")" << std::endl;
+
+  if (this->battery) {
+    this->cart_battery_load();
+  }
+
   return true;
 }
 
@@ -143,4 +150,126 @@ const char *	pbg_cart::cart_type_name()
     return this->_rom_type[this->_rom_header->type].c_str();
   }
   return "UNKNOWN";
+}
+
+uint8_t		pbg_cart::cart_read(uint16_t	address)	const
+{
+  if (!this->cart_mbc1() || address < 0x4000) {
+    return this->_rom_data[address];
+  }
+
+  if ((address & 0xE000) == 0xA000) {
+    if (!this->_ram_enabled) {
+      return 0xFF;
+    }
+    if (!this->_ram_bank) {
+      return 0xFF;
+    }
+    return this->_ram_bank[address - 0xA000];
+  }
+  return this->_rom_bank_x[address - 0x4000];
+}
+
+void	pbg_cart::cart_write(uint16_t	address, uint8_t	value)
+{
+  if (!this->cart_mbc1())
+    return;
+  if (address < 0x2000)
+    this->_ram_enabled = ((value & 0xF) == 0xA);
+  if ((address & 0xE000) == 0x2000)
+    {
+      //rom bank number
+      if (value == 0)
+	value = 1;
+      value &= 0b11111;
+      this->_rom_bank_value = value;
+      this->_rom_bank_x = this->_rom_data + (0x4000 * this->_rom_bank_value);
+    }
+  if ((address & 0xE000) == 0x4000) {
+    //ram bank number
+    this->_ram_bank_value = value & 0b11;
+    if (this->_ram_banking) {
+      if (this->cart_need_save())
+	this->cart_battery_save();
+      this->_ram_bank = this->_ram_banks[this->_ram_bank_value];
+    }
+  }
+  if ((address & 0xE000) == 0x6000) {
+    //banking mode select
+    this->_banking_mode = value & 1;
+    this->_ram_banking = this->_banking_mode;
+    if (this->_ram_banking) {
+      if (this->cart_need_save())
+	this->cart_battery_save();
+      this->_ram_bank = this->_ram_banks[this->_ram_bank_value];
+    }
+  }
+  if ((address & 0xE000) == 0xA000) {
+    if (!this->_ram_enabled)
+      return;
+    if (!this->_ram_bank) 
+      return;
+    this->_ram_bank[address - 0xA000] = value;
+    if (this->_battery)
+      this->_need_save = true;
+  }
+}
+
+const bool pbg_cart::cart_need_save() {
+  return this->need_save;
+}
+
+const bool pbg_cart::cart_mbc1() {
+  return BETWEEN(this->_rom_header->type, 1, 3);
+}
+
+const bool pbg_cart::cart_battery() {
+  return this->_rom_header->type == 3;
+}
+
+void pbg_cart::cart_setup_banking() {
+  for (int i = 0; i < 16; i++)
+    {
+      this->ram_banks[i] = 0;
+      if ((this->_rom_header->ram_size == 2 && i == 0) ||
+	  (this->_rom_header->ram_size == 3 && i < 4) || 
+	  (this->_rom_header->ram_size == 4 && i < 16) || 
+	  (this->_rom_header->ram_size == 5 && i < 8))
+	{
+	  this->ram_banks[i] = new uint8_t[0x2000];
+	  memset(this->ram_banks[i], 0, 0x2000);
+        }
+    }
+  this->ram_bank = this->ram_banks[0];
+  this->rom_bank_x = this->rom_data + 0x4000; //rom bank 1
+}
+
+void pbg_cart::cart_battery_load() {
+  if (!this->ram_bank) {
+    return;
+  }
+  std::string fn = this->filename + ".battery";
+  std::ifstream file(fn, std::ios::binary);
+  if (!file.is_open()) {
+    std::cerr << "❌ Failed to open: " << cart << " [Pour le petit roux SEGFAULT] ❌" << std::endl;
+    return;
+  }
+  file.read(reinterpret_cast<char*>(this->ram_bank), 0x2000);
+  file.close();
+}
+
+
+
+void pbg_cart::cart_battery_save() {
+  if (!this->ram_bank) {
+    return;
+  }
+  std::string fn = this->filename + ".battery";
+  std::ofstream fp(fn, std::ios::binary);
+  if (!fp.is_open()) {
+    std::cerr << "❌ Failed to open: " << cart << " [Pour le petit roux SEGFAULT] ❌" << std::endl;
+    return;
+  }
+  fp.write(reinterpret_cast<char*>(this->ram_bank), 0x2000);
+  fp.close();
 }

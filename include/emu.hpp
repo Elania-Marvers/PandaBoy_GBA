@@ -2,7 +2,7 @@
 #define		___EMU_HPP___
 #include <SFML/Graphics.hpp>
 #include "common.hpp"
-#include "cart.hpp"
+#include "context.hpp"
 
 using namespace pandaboygba;
 namespace pandaboygba
@@ -14,6 +14,7 @@ namespace pandaboygba
     bool		_paused;	// This represent if the emulator is un pause
     bool		_running;	// This represent if the emulator is running
     uint64_t		_ticks;		// This represent the emulator ticks
+    pbg_context *	_context;	// This represent the cartrige
     pbg_cart *		_cart;		// This represent the cartrige
     void (*_main_loop)(gba_emulator *);	// This is the main event loop
     void (*_event_loop)(gba_emulator *);// This is the event input loop
