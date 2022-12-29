@@ -2,6 +2,7 @@
 #define		___CPU_HPP___
 #include "common.hpp"
 #include "register.hpp"
+#include "instruction.hpp"
 #include "context.hpp"
 #include <stdbool.h>
 #define CPU_DEBUG 0
@@ -14,6 +15,7 @@
 
 namespace pandaboygba
 {
+  class pbg_context;
   class  pbg_cpu
   {
   private:
@@ -37,7 +39,8 @@ namespace pandaboygba
   public:
     pbg_cpu(pbg_context	*);
     bool cpu_step();
-
+    t_register *cpu_get_regs();
+    
     /*    
     IN_PROC inst_get_processor(in_type type);
 

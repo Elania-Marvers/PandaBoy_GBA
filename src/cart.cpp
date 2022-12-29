@@ -129,7 +129,7 @@ bool		pbg_cart::cart_load(const char *cart)
   // CARTRIDGE CHECKSUM
   std::cout << std::tab << "CHECKSUM" << std::tab << ":" << std::tab << std::setfill('0') << std::hex << std::setw(2) << std::setprecision(2) << static_cast<unsigned int>(this->_rom_header->checksum) << " (" << ((x & 0xFF) ? "PASSED" : "FAILED") << ")" << std::endl;
 
-  if (this->battery) {
+  if (this->_battery) {
     this->cart_battery_load();
   }
 
@@ -154,7 +154,7 @@ const char *	pbg_cart::cart_type_name()
 
 uint8_t		pbg_cart::cart_read(uint16_t	address)	const
 {
-  if (!this->cart_mbc1() || address < 0x4000) {
+  if (!(this->cart_mbc1()) || address < 0x4000) {
     return this->_rom_data[address];
   }
 
@@ -216,10 +216,10 @@ void	pbg_cart::cart_write(uint16_t	address, uint8_t	value)
 }
 
 const bool pbg_cart::cart_need_save() {
-  return this->need_save;
+  return this->_need_save;
 }
 
-const bool pbg_cart::cart_mbc1() {
+bool pbg_cart::cart_mbc1() const {
   return BETWEEN(this->_rom_header->type, 1, 3);
 }
 
@@ -230,46 +230,46 @@ const bool pbg_cart::cart_battery() {
 void pbg_cart::cart_setup_banking() {
   for (int i = 0; i < 16; i++)
     {
-      this->ram_banks[i] = 0;
+      this->_ram_banks[i] = 0;
       if ((this->_rom_header->ram_size == 2 && i == 0) ||
 	  (this->_rom_header->ram_size == 3 && i < 4) || 
 	  (this->_rom_header->ram_size == 4 && i < 16) || 
 	  (this->_rom_header->ram_size == 5 && i < 8))
 	{
-	  this->ram_banks[i] = new uint8_t[0x2000];
-	  memset(this->ram_banks[i], 0, 0x2000);
+	  this->_ram_banks[i] = new uint8_t[0x2000];
+	  memset(this->_ram_banks[i], 0, 0x2000);
         }
     }
-  this->ram_bank = this->ram_banks[0];
-  this->rom_bank_x = this->rom_data + 0x4000; //rom bank 1
+  this->_ram_bank = this->_ram_banks[0];
+  this->_rom_bank_x = this->_rom_data + 0x4000; //rom bank 1
 }
 
 void pbg_cart::cart_battery_load() {
-  if (!this->ram_bank) {
+  if (!this->_ram_bank) {
     return;
   }
-  std::string fn = this->filename + ".battery";
+  std::string fn = this->_filename + ".battery";
   std::ifstream file(fn, std::ios::binary);
   if (!file.is_open()) {
-    std::cerr << "❌ Failed to open: " << cart << " [Pour le petit roux SEGFAULT] ❌" << std::endl;
+    std::cerr << "❌ Failed to open: " << fn << " [Pour le petit roux SEGFAULT] ❌" << std::endl;
     return;
   }
-  file.read(reinterpret_cast<char*>(this->ram_bank), 0x2000);
+  file.read(reinterpret_cast<char*>(this->_ram_bank), 0x2000);
   file.close();
 }
 
 
 
 void pbg_cart::cart_battery_save() {
-  if (!this->ram_bank) {
+  if (!this->_ram_bank) {
     return;
   }
-  std::string fn = this->filename + ".battery";
+  std::string fn = this->_filename + ".battery";
   std::ofstream fp(fn, std::ios::binary);
   if (!fp.is_open()) {
-    std::cerr << "❌ Failed to open: " << cart << " [Pour le petit roux SEGFAULT] ❌" << std::endl;
+    std::cerr << "❌ Failed to open: " << fn << " [Pour le petit roux SEGFAULT] ❌" << std::endl;
     return;
   }
-  fp.write(reinterpret_cast<char*>(this->ram_bank), 0x2000);
+  fp.write(reinterpret_cast<char*>(this->_ram_bank), 0x2000);
   fp.close();
 }

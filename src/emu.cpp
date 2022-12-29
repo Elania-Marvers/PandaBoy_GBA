@@ -36,11 +36,13 @@ gba_emulator::gba_emulator()
 
 gba_emulator::~gba_emulator()
 {
+  /*
   if (this->_cart != NULL)
     {
       delete this->_cart;
       this->_cart = NULL;
     }
+  */
 }
 
 /*********************************************************/
@@ -93,6 +95,7 @@ void	gba_emulator::setTicks(uint64_t state)
 
 void	gba_emulator::loadCart(char *cart)
 {
+  /*
   if (this->_cart != NULL)
     {
       delete this->_cart;
@@ -103,6 +106,7 @@ void	gba_emulator::loadCart(char *cart)
     return;
 
   (this->getCart())->cart_load(cart);
+  */
 }
 
 void gba_emulator::event()

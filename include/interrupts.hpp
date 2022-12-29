@@ -3,6 +3,7 @@
 #include "context.hpp"
 #include "stack.hpp"
 
+using namespace pandaboygba;
 namespace pandaboygba
 {
   typedef enum {
@@ -12,10 +13,10 @@ namespace pandaboygba
     IT_SERIAL = 8,
     IT_JOYPAD = 16
   } interrupt_type;
-
+  /*
   void cpu_request_interrupt(interrupt_type t);
   void cpu_handle_interrupts(pbg_context *ctx);
-  
+  */
 }
 
 #endif

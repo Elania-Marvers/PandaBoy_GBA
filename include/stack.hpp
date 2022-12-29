@@ -3,10 +3,18 @@
 #include "common.hpp"
 #include "context.hpp"
 
+
+using namespace pandaboygba;
 namespace pandaboygba
 {
+  class pbg_context;
   class  pbg_stack
   {
+  private:
+    pbg_context	*	_context_ptr;
+  public:
+    pbg_stack(pbg_context	*);
+
     void stack_push(uint8_t data);
     void stack_push16(uint16_t data);
 

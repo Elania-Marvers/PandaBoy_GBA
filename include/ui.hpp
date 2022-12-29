@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "context.hpp"
 
+using namespace pandaboygba;
 namespace pandaboygba
 {
   class  pbg_ui

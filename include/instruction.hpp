@@ -109,6 +109,8 @@ typedef struct {
     cond_type		_cond;
     uint8_t 		_param;
 }		instruction_t;
+
+
 namespace pandaboygba
 {
   class pbg_instruction

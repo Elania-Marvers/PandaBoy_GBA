@@ -2,6 +2,7 @@
 #define		___TIMER_HPP___
 #include "interrupts.hpp"
 
+using namespace pandaboygba;
 namespace pandaboygba
 {
   class  pbg_timer

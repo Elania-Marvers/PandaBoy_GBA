@@ -17,8 +17,14 @@
 
 using namespace pandaboygba;
 
+pbg_bus::pbg_bus(pbg_context	*ctx)
+  : _context_ptr(ctx)
+{
+}
+
 uint8_t	pbg_bus::bus_read(uint16_t	address)
 {
+  /*
   if (address < 0x8000) 			//ROM Data
     return this->_context_ptr->_cart_ptr->cart_read(address);		// CART
   else if (address < 0xA000) 			//Char/Map Data
@@ -40,11 +46,13 @@ uint8_t	pbg_bus::bus_read(uint16_t	address)
   else if (address == 0xFFFF) 			//CPU ENABLE REGISTER...
     return this->_context_ptr->_cpu_ptr->cpu_get_ie_register();		// CPU
   return this->_context_ptr->_ram_ptr->hram_read(address);		// RAM
+  */
 }
 
 void	pbg_bus::bus_write(uint16_t	address,
 			   uint8_t	value)
 {
+  /*
   if (address < 0x8000) 		//ROM Data
     this->_context_ptr->_cart_ptr->cart_write(address, value);
   else if (address < 0xA000) 		//Char/Map Data
@@ -66,6 +74,7 @@ void	pbg_bus::bus_write(uint16_t	address,
     this->_context_ptr->_cpu_ptr->cpu_set_ie_register(value);
   else 
     this->_context_ptr->_ram_ptr->hram_write(address, value);
+  */
 }
 
 
@@ -82,3 +91,4 @@ void	pbg_bus::bus_write16	(uint16_t	address,
   this->bus_write(address + 1, (value >> 8) & 0xFF);
   this->bus_write(address, value & 0xFF);
 }
+

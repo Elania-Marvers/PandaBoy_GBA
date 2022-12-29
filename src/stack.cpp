@@ -2,9 +2,15 @@
 
 using namespace pandaboygba;
 
+pbg_stack::pbg_stack(pbg_context *ctx)
+  : _context_ptr(ctx)
+{
+  
+}
+
 void pbg_stack::stack_push(uint8_t data) {
-    cpu_get_regs()->sp--;
-    bus_write(cpu_get_regs()->sp, data);
+  //    this->_context_ptr->_cpu_ptr->cpu_get_regs()->sp--;
+  //    this->_context_ptr->_bus_ptr->bus_write(this->_context_ptr->_cpu_ptr->cpu_get_regs()->sp, data);
 }
 
 void pbg_stack::stack_push16(uint16_t data) {
@@ -13,7 +19,7 @@ void pbg_stack::stack_push16(uint16_t data) {
 }
 
 uint8_t pbg_stack::stack_pop() {
-    return bus_read(cpu_get_regs()->sp++);
+  //    return this->_context_ptr->_bus_ptr->bus_read(this->_context_ptr->_cpu_ptr->cpu_get_regs()->sp++);
 }
 
 uint16_t pbg_stack::stack_pop16() {

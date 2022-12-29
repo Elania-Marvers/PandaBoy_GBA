@@ -1,7 +1,6 @@
 #include "instruction.hpp"
 
 using namespace pandaboygba;
-
 pbg_instruction::pbg_instruction()
 {
   this->_instructions.insert({

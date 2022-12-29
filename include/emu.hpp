@@ -7,6 +7,9 @@
 using namespace pandaboygba;
 namespace pandaboygba
 {
+  class pbg_context;
+  class pbg_cart;
+  
   class gba_emulator
   {
   private:

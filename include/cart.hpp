@@ -25,6 +25,7 @@ typedef struct		s_rom_header{
 
 namespace pandaboygba
 {
+  
   class  pbg_cart
   {
   private:
@@ -49,7 +50,8 @@ namespace pandaboygba
   private:
     const char *	cart_lic_name();
     const char *        cart_type_name();
-    const bool		cart_mbc1();
+    bool		cart_mbc1() const;
+    const bool		cart_battery();
     
   public:
     t_rom_header *	getRomHeader()	const;

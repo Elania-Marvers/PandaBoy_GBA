@@ -36,7 +36,7 @@ void pbg_timer::timer_tick()
     this->_tima++;
     if (this->_tima == 0xFF) {
       this->_tima = this->_tma;
-      cpu_request_interrupt(IT_TIMER);
+      //      cpu_request_interrupt(IT_TIMER);
     }
   }
 }
@@ -68,5 +68,5 @@ uint8_t pbg_timer::timer_read(uint16_t address)
 
 pbg_timer * pbg_timer::timer_get_context()
 {
-  return &this;
+  return this;
 }
