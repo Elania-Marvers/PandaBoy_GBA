@@ -20,6 +20,7 @@ using namespace pandaboygba;
 pbg_bus::pbg_bus(pbg_context	*ctx)
   : _context_ptr(ctx)
 {
+  std::cout << "🎮 " << RED << "[" << ORANGE << "Running BUS!" << RED << "]" << DEFAULT << " 🎮" << std::endl;
 }
 
 uint8_t	pbg_bus::bus_read(uint16_t	address)

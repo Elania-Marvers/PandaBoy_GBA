@@ -8,7 +8,7 @@ static int msg_size = 0;
 pbg_dbg::pbg_dbg(pbg_context *ctx)
   : _context_ptr(ctx)
 {
-  
+std::cout << "🎮 " << RED << "[" << ORANGE << "Running DBG!" << RED << "]" << DEFAULT << " 🎮" << std::endl;  
 }
 
 void pbg_dbg::dbg_update() {

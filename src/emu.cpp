@@ -27,7 +27,7 @@ int pbg_emu_run (int		argc,
 /**	These function is emulator constructor		**/
 /*********************************************************/
 gba_emulator::gba_emulator()
-  : _window(sf::VideoMode(800, 800, 32), "Emulator"), _paused(false), _running(true), _ticks(0)
+  : _window(sf::VideoMode(800, 800, 32), "Emulator"), _paused(false), _running(true)
 {
   this->_context = new pbg_context(this);
   std::cout << "🎮 " << RED << "[" << ORANGE << "Running Emulator!" << RED << "]" << DEFAULT << " 🎮" << std::endl;
@@ -54,11 +54,6 @@ bool	gba_emulator::getRunning()	const
   return this->_running;
 }
 
-uint64_t	gba_emulator::getTicks()	const
-{
-  return this->_ticks;
-}
-
 pbg_context& 	gba_emulator::getContext()      
 {
   return *(this->_context);
@@ -81,11 +76,6 @@ void	gba_emulator::setPaused(bool state)
 void	gba_emulator::setRunning(void)
 {
   this->_running = _window.isOpen();
-}
-
-void	gba_emulator::setTicks(uint64_t state)
-{
-  this->_ticks = state;
 }
 
 void	gba_emulator::loadCart(char *cart)
@@ -134,18 +124,13 @@ void gba_emulator::window_stop(void)
   this->_window.close();
 }
 
-void gba_emulator::delay(uint32_t time)
-{
-  sf::sleep(sf::milliseconds(time));
-}
-
 void gba_emulator::emu_cycles(int cpu_cycles)
 {
   for (int i = 0; i < cpu_cycles; i++)
     {
       for (int n = 0; n < 4; n++)
 	{
-	  this->_ticks++;
+	  this->_context->_ui_ptr->_ticks++;
 	  this->_context->_timer_ptr->timer_tick();
 	  this->_context->_ppu_ptr->ppu_tick();
         }

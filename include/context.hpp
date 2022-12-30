@@ -17,7 +17,7 @@
 #include "gamepad.hpp"
 #include "dbg.hpp"
 #include "interrupts.hpp"
-
+#include "ui.hpp"
 
 namespace pandaboygba
 {
@@ -36,6 +36,7 @@ namespace pandaboygba
   class pbg_gamepad;
   class pbg_dbg;
   class pbg_interrupts;
+  class pbg_ui;
   
   class pbg_context
   {
@@ -57,6 +58,7 @@ namespace pandaboygba
     pbg_gamepad *	_gamepad_ptr;
     pbg_dbg *		_dbg_ptr;
     pbg_interrupts *	_interrupts_ptr;
+    pbg_ui *		_ui_ptr;
   };
 }
   

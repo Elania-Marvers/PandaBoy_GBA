@@ -7,11 +7,12 @@ using namespace pandaboygba;
 /**	pbg_cpu class					**/
 /*********************************************************/
 
-pbg_cpu * cpu_ctx;
+static pbg_cpu * cpu_ctx;
 
 pbg_cpu::pbg_cpu(pbg_context	*ctx)
   : _context_ptr(ctx)
 {
+  std::cout << "🎮 " << RED << "[" << ORANGE << "Running CPU!" << RED << "]" << DEFAULT << " 🎮" << std::endl;
   cpu_ctx = this;
   this->_regs.pc = 0x100;
   this->_regs.sp = 0xFFFE;
@@ -100,7 +101,7 @@ void pbg_interrupts::cpu_request_interrupt(interrupt_type t) {
     this->_context_ptr->_cpu_ptr->_int_flags |= t;
 }
 
-pbg_cpu * cpu_get_ctx()
+pandaboygba::pbg_cpu * pandaboygba::cpu_get_ctx()
 {
   return cpu_ctx;
 }

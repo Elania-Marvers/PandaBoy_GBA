@@ -8,6 +8,7 @@ static unsigned long colors_default[4] = {0xFFFFFFFF, 0xFFAAAAAA, 0xFF555555, 0x
 pbg_lcd::pbg_lcd(pbg_context *ctx)
   : _context_ptr(ctx)
 {
+  std::cout << "🎮 " << RED << "[" << ORANGE << "Running LCD!" << RED << "]" << DEFAULT << " 🎮" << std::endl;
   lcd_ctx = this;
 
   this->lcdc = 0x91;
@@ -64,6 +65,7 @@ void pbg_lcd::update_palette(uint8_t palette_data, uint8_t pal)
   p_colors[3] = colors_default[(palette_data >> 6) & 0b11];
 }
 
-pbg_lcd *lcd_get_context() {
+pandaboygba::pbg_lcd *pandaboygba::lcd_get_context()
+{
     return lcd_ctx;
 }

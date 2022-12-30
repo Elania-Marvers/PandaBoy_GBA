@@ -17,7 +17,6 @@ namespace pandaboygba
     bool		_paused;	// This represent if the emulator is un pause
     bool		_running;	// This represent if the emulator is running
     bool		_die;		// This is the die xD
-    uint64_t		_ticks;		// This represent the emulator ticks
     pbg_context *	_context;	// This represent the context
     void (*_main_loop)(gba_emulator *);	// This is the main event loop
     void (*_event_loop)(gba_emulator *);// This is the event input loop
@@ -26,17 +25,14 @@ namespace pandaboygba
   public:
     bool		getPaused()	const;
     bool		getRunning()	const;
-    uint64_t		getTicks()	const;
     pbg_context&	getContext();
     sf::RenderWindow&	get_window(void);
     
     void	setPaused(bool);
     void	setRunning(void);
-    void	setTicks(uint64_t);
     void	loadCart(char *);
 
     void	event();
-    void	delay(uint32_t);
     void	set_main_loop(void (*fptr)(gba_emulator *));
     void	set_event_loop(void (*fptr)(gba_emulator *));
     void	display(void);

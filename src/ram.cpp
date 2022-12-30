@@ -5,6 +5,7 @@ using namespace pandaboygba;
 pbg_ram::pbg_ram (pbg_context *ctx)
   : _context_ptr(ctx)
 {
+  std::cout << "🎮 " << RED << "[" << ORANGE << "Running RAM!" << RED << "]" << DEFAULT << " 🎮" << std::endl;
 }
 
 uint8_t pbg_ram::wram_read(uint16_t address)

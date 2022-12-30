@@ -5,7 +5,7 @@ using namespace pandaboygba;
 pbg_dma::pbg_dma(pbg_context *ctx)
   : _context_ptr(ctx), active(false)
 {
-  
+std::cout << "🎮 " << RED << "[" << ORANGE << "Running DMA!" << RED << "]" << DEFAULT << " 🎮" << std::endl;  
 }
 
 void pbg_dma::dma_start(uint8_t start)

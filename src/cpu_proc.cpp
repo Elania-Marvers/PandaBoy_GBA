@@ -1,10 +1,8 @@
 #include "cpu.hpp"
 
 using namespace pandaboygba;
-pbg_cpu * cpu_get_ctx();
 
 //processes CPU instructions...
-
 void pbg_cpu::cpu_set_flags(int8_t z, int8_t n, int8_t h, int8_t c)
 {
   if (z != -1)
@@ -485,46 +483,6 @@ void pbg_cpu::proc_add()
   this->cpu_set_reg(this->_cur_inst->_reg_1, val & 0xFFFF);
   this->cpu_set_flags(z, 0, h, c);
 }
-
-/*IN_PROC processors[] = {
-  [IN_NONE] = &cpu_get_ctx()->proc_none,
-  [IN_NOP] = &cpu_get_ctx()->proc_nop,
-  [IN_LD] = &cpu_get_ctx()->proc_ld,
-  [IN_LDH] = &cpu_get_ctx()->proc_ldh,
-  [IN_JP] = &cpu_get_ctx()->proc_jp,
-  [IN_DI] = &cpu_get_ctx()->proc_di,
-  [IN_POP] = &cpu_get_ctx()->proc_pop,
-  [IN_PUSH] = &cpu_get_ctx()->proc_push,
-  [IN_JR] = &cpu_get_ctx()->proc_jr,
-  [IN_CALL] = &cpu_get_ctx()->proc_call,
-  [IN_RET] = &cpu_get_ctx()->proc_ret,
-  [IN_RST] = &cpu_get_ctx()->proc_rst,
-  [IN_DEC] = &cpu_get_ctx()->proc_dec,
-  [IN_INC] = &cpu_get_ctx()->proc_inc,
-  [IN_ADD] = &cpu_get_ctx()->proc_add,
-  [IN_ADC] = &cpu_get_ctx()->proc_adc,
-  [IN_SUB] = &cpu_get_ctx()->proc_sub,
-  [IN_SBC] = &cpu_get_ctx()->proc_sbc,
-  [IN_AND] = &cpu_get_ctx()->proc_and,
-  [IN_XOR] = &cpu_get_ctx()->proc_xor,
-  [IN_OR] = &cpu_get_ctx()->proc_or,
-  [IN_CP] = &cpu_get_ctx()->proc_cp,
-  [IN_CB] = &cpu_get_ctx()->proc_cb,
-  [IN_RRCA] = &cpu_get_ctx()->proc_rrca,
-  [IN_RLCA] = &cpu_get_ctx()->proc_rlca,
-  [IN_RRA] = &cpu_get_ctx()->proc_rra,
-  [IN_RLA] = &cpu_get_ctx()->proc_rla,
-  [IN_STOP] = &cpu_get_ctx()->proc_stop,
-  [IN_HALT] = &cpu_get_ctx()->proc_halt,
-  [IN_DAA] = &cpu_get_ctx()->proc_daa,
-  [IN_CPL] = &cpu_get_ctx()->proc_cpl,
-  [IN_SCF] = &cpu_get_ctx()->proc_scf,
-  [IN_CCF] = &cpu_get_ctx()->proc_ccf,
-  [IN_EI] = &cpu_get_ctx()->proc_ei,
-  [IN_RETI] = &cpu_get_ctx()->proc_reti
-};
-*/
-
 
 
 IN_PROC processors[] = {

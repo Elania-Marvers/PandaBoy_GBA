@@ -10,7 +10,7 @@ using namespace pandaboygba;
 pbg_timer::pbg_timer(pbg_context *ctx)
   : _context_ptr(ctx), _div(0xAC00)
 {
-
+  std::cout << "🎮 " << RED << "[" << ORANGE << "Running TIMER!" << RED << "]" << DEFAULT << " 🎮" << std::endl;
 }
 
 void pbg_timer::timer_tick()

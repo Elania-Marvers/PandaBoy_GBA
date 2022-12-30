@@ -1,0 +1,155 @@
+#include "ppu.hpp"
+
+using namespace pandaboygba;
+pandaboygba::pbg_ppu *pandaboygba::ppu_get_context();
+pandaboygba::pbg_lcd *pandaboygba::lcd_get_context();
+
+static uint32_t target_frame_time = 1000 / 60;
+static long prev_frame_time = 0;
+static long start_timer = 0;
+static long frame_count = 0;
+
+void pbg_ppu::increment_ly()
+{
+  if (this->window_visible() && lcd_get_context()->ly >= lcd_get_context()->win_y && lcd_get_context()->ly < lcd_get_context()->win_y + YRES)
+    ppu_get_context()->window_line++;
+  lcd_get_context()->ly++;
+  if (lcd_get_context()->ly == lcd_get_context()->ly_compare)
+    {
+      LCDS_LYC_SET(1);
+      if (LCDS_STAT_INT(SS_LYC)) 
+	this->_context_ptr->_interrupts_ptr->cpu_request_interrupt(IT_LCD_STAT);
+    }
+  else 
+    LCDS_LYC_SET(0);
+}
+
+void pbg_ppu::load_line_sprites()
+{
+  int cur_y = lcd_get_context()->ly;
+  uint8_t sprite_height = LCDC_OBJ_HEIGHT;
+  memset(ppu_get_context()->line_entry_array, 0, sizeof(ppu_get_context()->line_entry_array));
+  for (int i=0; i<40; i++) {
+    oam_entry e = ppu_get_context()->oam_ram[i];
+    if (!e.x)
+      continue;	//x = 0 means not visible...
+    if (ppu_get_context()->line_sprite_count >= 10)
+      break;	//max 10 sprites per line...
+    if (e.y <= cur_y + 16 && e.y + sprite_height > cur_y + 16)
+      {
+	//this sprite is on the current line.
+	oam_line_entry *entry = &ppu_get_context()->line_entry_array[ppu_get_context()->line_sprite_count++];
+	entry->entry = e;
+	entry->next = NULL;
+	if (!ppu_get_context()->line_sprites || ppu_get_context()->line_sprites->entry.x > e.x)
+	  {
+	    entry->next = ppu_get_context()->line_sprites;
+	    ppu_get_context()->line_sprites = entry;
+	    continue;
+	  }
+	//do some sorting...
+	oam_line_entry *le = ppu_get_context()->line_sprites;
+	oam_line_entry *prev = le;
+	while(le)
+	  {
+	    if (le->entry.x > e.x)
+	      {
+		prev->next = entry;
+		entry->next = le;
+		break;
+	      }
+	    if (!le->next)
+	      {
+		le->next = entry;
+		break;
+	      }
+	    prev = le;
+	    le = le->next;
+	  }
+      }
+  }
+}
+
+void pbg_ppu::ppu_mode_oam()
+{
+  if (ppu_get_context()->line_ticks >= 80)
+    {
+      LCDS_MODE_SET(MODE_XFER);
+      ppu_get_context()->pfc.cur_fetch_state = FS_TILE;
+      ppu_get_context()->pfc.line_x = 0;
+      ppu_get_context()->pfc.fetch_x = 0;
+      ppu_get_context()->pfc.pushed_x = 0;
+      ppu_get_context()->pfc.fifo_x = 0;
+    }
+  if (ppu_get_context()->line_ticks == 1)      //read oam on the first tick only...
+    {
+      ppu_get_context()->line_sprites = 0;
+      ppu_get_context()->line_sprite_count = 0;
+      this->load_line_sprites();
+    }
+}
+
+void pbg_ppu::ppu_mode_xfer()
+{
+  this->pipeline_process();
+  if (ppu_get_context()->pfc.pushed_x >= XRES)
+    {
+      this->pipeline_fifo_reset();
+      LCDS_MODE_SET(MODE_HBLANK);
+      if (LCDS_STAT_INT(SS_HBLANK)) 
+	this->_context_ptr->_interrupts_ptr->cpu_request_interrupt(IT_LCD_STAT);
+    }
+}
+
+void pbg_ppu::ppu_mode_vblank()
+{
+  if (ppu_get_context()->line_ticks >= TICKS_PER_LINE)
+    {
+      this->increment_ly();
+      if (lcd_get_context()->ly >= LINES_PER_FRAME)
+	{
+	  LCDS_MODE_SET(MODE_OAM);
+	  lcd_get_context()->ly = 0;
+	  ppu_get_context()->window_line = 0;
+	}
+      ppu_get_context()->line_ticks = 0;
+    }
+}
+
+
+void pbg_ppu::ppu_mode_hblank()
+{
+  if (ppu_get_context()->line_ticks >= TICKS_PER_LINE)
+    {
+      this->increment_ly();
+      if (lcd_get_context()->ly >= YRES)
+	{
+	  LCDS_MODE_SET(MODE_VBLANK);
+	  this->_context_ptr->_interrupts_ptr->cpu_request_interrupt(IT_VBLANK);
+	  if (LCDS_STAT_INT(SS_VBLANK)) 
+	    this->_context_ptr->_interrupts_ptr->cpu_request_interrupt(IT_LCD_STAT);
+	  ppu_get_context()->current_frame++;
+	  //calc FPS...
+	  uint32_t end = this->_context_ptr->_ui_ptr->getTicks();
+	  uint32_t frame_time = end - prev_frame_time;
+	  if (frame_time < target_frame_time) 
+	    this->_context_ptr->_ui_ptr->delay((target_frame_time - frame_time));
+      	  if (end - start_timer >= 1000)
+	    {
+	      uint32_t fps = frame_count;
+	      start_timer = end;
+	      frame_count = 0;
+	      printf("FPS: %d\n", fps);
+	      if (this->_context_ptr->_cart_ptr->cart_need_save())
+		this->_context_ptr->_cart_ptr->cart_battery_save();
+	    }
+	  frame_count++;
+	  prev_frame_time = this->_context_ptr->_ui_ptr->getTicks();
+	}
+      else 
+	LCDS_MODE_SET(MODE_OAM);
+      ppu_get_context()->line_ticks = 0;
+    }
+}
+
+

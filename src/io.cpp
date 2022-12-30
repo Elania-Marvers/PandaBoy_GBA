@@ -7,7 +7,7 @@ static char serial_data[2];
 pbg_io::pbg_io(pbg_context *ctx)
   : _context_ptr(ctx)
 {
-  
+std::cout << "🎮 " << RED << "[" << ORANGE << "Running IO!" << RED << "]" << DEFAULT << " 🎮" << std::endl;  
 }
 
 uint8_t pbg_io::io_read(uint16_t address) {

@@ -3,6 +3,5 @@
 void main_loop(gba_emulator *win)
 {
   win->display();
-  win->delay(10);
 }
 

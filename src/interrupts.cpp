@@ -6,7 +6,7 @@ using namespace pandaboygba;
 pbg_interrupts::pbg_interrupts(pbg_context *ctx)
   : _context_ptr(ctx)
 {
-  
+std::cout << "🎮 " << RED << "[" << ORANGE << "Running INTERRUPTS!" << RED << "]" << DEFAULT << " 🎮" << std::endl;  
 }
 
 

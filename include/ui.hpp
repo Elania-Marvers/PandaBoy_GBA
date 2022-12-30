@@ -11,7 +11,14 @@ namespace pandaboygba
   private:
     pbg_context *		_context_ptr;
   public:
+    uint64_t		_ticks;		// This represent the emulator ticks
+
+    
     pbg_ui(pbg_context *);
+    uint64_t		getTicks()	const;
+    void	setTicks(uint64_t);
+    void	delay(uint32_t);
+
   };
 }
 

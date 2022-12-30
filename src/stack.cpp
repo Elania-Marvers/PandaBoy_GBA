@@ -5,7 +5,7 @@ using namespace pandaboygba;
 pbg_stack::pbg_stack(pbg_context *ctx)
   : _context_ptr(ctx)
 {
-  
+  std::cout << "🎮 " << RED << "[" << ORANGE << "Running STACK!" << RED << "]" << DEFAULT << " 🎮" << std::endl;  
 }
 
 void pbg_stack::stack_push(uint8_t data) {
