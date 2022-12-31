@@ -1,7 +1,6 @@
 #include "cpu.hpp"
 
 using namespace pandaboygba;
-
 //processes CPU instructions...
 void pbg_cpu::cpu_set_flags(int8_t z, int8_t n, int8_t h, int8_t c)
 {
@@ -484,46 +483,52 @@ void pbg_cpu::proc_add()
   this->cpu_set_flags(z, 0, h, c);
 }
 
+static std::map<int, IN_PROC> processors;
 
-IN_PROC processors[] = {
-  &pbg_cpu::proc_none,
-  &pbg_cpu::proc_nop,
-  &pbg_cpu::proc_ld,
-  &pbg_cpu::proc_ldh,
-  &pbg_cpu::proc_jp,
-  &pbg_cpu::proc_di,
-  &pbg_cpu::proc_pop,
-  &pbg_cpu::proc_push,
-  &pbg_cpu::proc_jr,
-  &pbg_cpu::proc_call,
-  &pbg_cpu::proc_ret,
-  &pbg_cpu::proc_rst,
-  &pbg_cpu::proc_dec,
-  &pbg_cpu::proc_inc,
-  &pbg_cpu::proc_add,
-  &pbg_cpu::proc_adc,
-  &pbg_cpu::proc_sub,
-  &pbg_cpu::proc_sbc,
-  &pbg_cpu::proc_and,
-  &pbg_cpu::proc_xor,
-  &pbg_cpu::proc_or,
-  &pbg_cpu::proc_cp,
-  &pbg_cpu::proc_cb,
-  &pbg_cpu::proc_rrca,
-  &pbg_cpu::proc_rlca,
-  &pbg_cpu::proc_rra,
-  &pbg_cpu::proc_rla,
-  &pbg_cpu::proc_stop,
-  &pbg_cpu::proc_halt,
-  &pbg_cpu::proc_daa,
-  &pbg_cpu::proc_cpl,
-  &pbg_cpu::proc_scf,
-  &pbg_cpu::proc_ccf,
-  &pbg_cpu::proc_ei,
-  &pbg_cpu::proc_reti
-};
+void init_proc()
+{
+  processors.insert({
+      {IN_NONE, &pbg_cpu::proc_none},
+      {IN_NOP, &pbg_cpu::proc_nop},
+      {IN_LD, &pbg_cpu::proc_ld},
+      {IN_LDH, &pbg_cpu::proc_ldh},
+      {IN_JP, &pbg_cpu::proc_jp},
+      {IN_DI, &pbg_cpu::proc_di},
+      {IN_POP, &pbg_cpu::proc_pop},
+      {IN_PUSH, &pbg_cpu::proc_push},
+      {IN_JR, &pbg_cpu::proc_jr},
+      {IN_CALL, &pbg_cpu::proc_call},
+      {IN_RET, &pbg_cpu::proc_ret},
+      {IN_RST, &pbg_cpu::proc_rst},
+      {IN_DEC, &pbg_cpu::proc_dec},
+      {IN_INC, &pbg_cpu::proc_inc},
+      {IN_ADD, &pbg_cpu::proc_add},
+      {IN_ADC, &pbg_cpu::proc_adc},
+      {IN_SUB, &pbg_cpu::proc_sub},
+      {IN_SBC, &pbg_cpu::proc_sbc},
+      {IN_AND, &pbg_cpu::proc_and},
+      {IN_XOR, &pbg_cpu::proc_xor},
+      {IN_OR, &pbg_cpu::proc_or},
+      {IN_CP, &pbg_cpu::proc_cp},
+      {IN_CB, &pbg_cpu::proc_cb},
+      {IN_RRCA, &pbg_cpu::proc_rrca},
+      {IN_RLCA, &pbg_cpu::proc_rlca},
+      {IN_RRA, &pbg_cpu::proc_rra},
+      {IN_RLA, &pbg_cpu::proc_rla},
+      {IN_STOP, &pbg_cpu::proc_stop},
+      {IN_HALT, &pbg_cpu::proc_halt},
+      {IN_DAA, &pbg_cpu::proc_daa},
+      {IN_CPL, &pbg_cpu::proc_cpl},
+      {IN_SCF, &pbg_cpu::proc_scf},
+      {IN_CCF, &pbg_cpu::proc_ccf},
+      {IN_EI, &pbg_cpu::proc_ei},
+      {IN_RETI, &pbg_cpu::proc_reti}
+    });
+}
 
 IN_PROC pbg_cpu::inst_get_processor(in_type type) {
+  if (processors.empty())
+    init_proc();
   return processors[type];
 }
 

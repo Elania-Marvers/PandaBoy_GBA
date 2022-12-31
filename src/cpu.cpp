@@ -83,9 +83,8 @@ void pbg_cpu::fetch_instruction() {
 void pbg_cpu::execute()
 {
   IN_PROC proc = this->inst_get_processor(this->_cur_inst->_type);
-  if (!proc) {
+  if (!proc) 
     NO_IMPL
-      }
   (this->*proc)();
 }
 

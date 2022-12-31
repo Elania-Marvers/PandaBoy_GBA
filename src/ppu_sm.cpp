@@ -96,7 +96,7 @@ void pbg_ppu::ppu_mode_xfer()
     {
       this->pipeline_fifo_reset();
       LCDS_MODE_SET(MODE_HBLANK);
-      if (LCDS_STAT_INT(SS_HBLANK)) 
+      if (LCDS_STAT_INT(SS_HBLANK))
 	this->_context_ptr->_interrupts_ptr->cpu_request_interrupt(IT_LCD_STAT);
     }
 }

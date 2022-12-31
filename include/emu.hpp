@@ -1,6 +1,7 @@
 #ifndef		___EMU_HPP___
 #define		___EMU_HPP___
 #include <SFML/Graphics.hpp>
+#include <pthread.h>
 #include "common.hpp"
 #include "context.hpp"
 #include "cart.hpp"
@@ -13,7 +14,6 @@ namespace pandaboygba
   class gba_emulator
   {
   private:
-    sf::RenderWindow	_window;	// This represent the window of sfml
     bool		_paused;	// This represent if the emulator is un pause
     bool		_running;	// This represent if the emulator is running
     bool		_die;		// This is the die xD
@@ -26,7 +26,6 @@ namespace pandaboygba
     bool		getPaused()	const;
     bool		getRunning()	const;
     pbg_context&	getContext();
-    sf::RenderWindow&	get_window(void);
     
     void	setPaused(bool);
     void	setRunning(void);
@@ -36,11 +35,12 @@ namespace pandaboygba
     void	set_main_loop(void (*fptr)(gba_emulator *));
     void	set_event_loop(void (*fptr)(gba_emulator *));
     void	display(void);
-    void	window_stop(void);
     void	emu_cycles(int);
     
 		gba_emulator();
 		~gba_emulator();
+
+
 
   };
 };

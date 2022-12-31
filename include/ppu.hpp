@@ -72,6 +72,7 @@ namespace pandaboygba
     uint32_t *video_buffer;
    
     pbg_ppu(pbg_context *);
+    ~pbg_ppu();
     void ppu_tick();
     void ppu_oam_write(uint16_t address, uint8_t value);
     uint8_t ppu_oam_read(uint16_t address);

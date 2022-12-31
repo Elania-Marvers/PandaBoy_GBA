@@ -58,55 +58,55 @@ typedef enum {
 } reg_type;
 
 typedef enum {
-  IN_NONE,
-  IN_NOP,
-  IN_LD,
-  IN_INC,
-  IN_DEC,
-  IN_RLCA,
-  IN_ADD,
-  IN_RRCA,
-  IN_STOP,
-  IN_RLA,
-  IN_JR,
-  IN_RRA,
-  IN_DAA,
-  IN_CPL,
-  IN_SCF,
-  IN_CCF,
-  IN_HALT,
-  IN_ADC,
-  IN_SUB,
-  IN_SBC,
-  IN_AND,
-  IN_XOR,
-  IN_OR,
-  IN_CP,
-  IN_POP,
-  IN_JP,
-  IN_PUSH,
-  IN_RET,
-  IN_CB,
-  IN_CALL,
-  IN_RETI,
-  IN_LDH,
-  IN_JPHL,
-  IN_DI,
-  IN_EI,
-  IN_RST,
-  IN_ERR,
+  IN_NONE, //0
+  IN_NOP,  //1
+  IN_LD,   //2
+  IN_INC,  //3
+  IN_DEC,  //4
+  IN_RLCA, //5
+  IN_ADD,  //6
+  IN_RRCA, //7
+  IN_STOP, //8
+  IN_RLA,  //9
+  IN_JR,   //10
+  IN_RRA,  //11
+  IN_DAA,  //12
+  IN_CPL,  //13
+  IN_SCF,  //14
+  IN_CCF,  //15
+  IN_HALT, //16
+  IN_ADC,  //17
+  IN_SUB,  //18
+  IN_SBC,  //19
+  IN_AND,  //20
+  IN_XOR,  //21
+  IN_OR,   //22
+  IN_CP,   //23
+  IN_POP,  //24
+  IN_JP,   //25
+  IN_PUSH, //26
+  IN_RET,  //27
+  IN_CB,   //28
+  IN_CALL, //29
+  IN_RETI, //30
+  IN_LDH,  //31
+  IN_JPHL, //32
+  IN_DI,   //33
+  IN_EI,   //34
+  IN_RST,  //35
+  IN_ERR,  //36
   //CB instructions...
-  IN_RLC, 
-  IN_RRC,
-  IN_RL, 
-  IN_RR,
-  IN_SLA, 
-  IN_SRA,
-  IN_SWAP, 
-  IN_SRL,
-  IN_BIT, 
-  IN_RES, 
-  IN_SET
+  IN_RLC,  //37
+  IN_RRC,  //38
+  IN_RL,   //39
+  IN_RR,   //40
+  IN_SLA,  //41
+  IN_SRA,  //42
+  IN_SWAP, //43
+  IN_SRL,  //44
+  IN_BIT,  //45
+  IN_RES,  //46
+  IN_SET   //47
 } in_type;
 
 typedef enum {

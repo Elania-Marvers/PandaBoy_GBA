@@ -21,12 +21,10 @@ uint16_t pbg_cpu::cpu_read_reg(reg_type rt) {
   case RT_E: return this->_regs.e;
   case RT_H: return this->_regs.h;
   case RT_L: return this->_regs.l;
-
   case RT_AF: return this->reverse(*((uint16_t *)&this->_regs.a));
   case RT_BC: return this->reverse(*((uint16_t *)&this->_regs.b));
   case RT_DE: return this->reverse(*((uint16_t *)&this->_regs.d));
   case RT_HL: return this->reverse(*((uint16_t *)&this->_regs.h));
-
   case RT_PC: return this->_regs.pc;
   case RT_SP: return this->_regs.sp;
   default: return 0;
@@ -45,7 +43,6 @@ void pbg_cpu::cpu_set_reg(reg_type rt, uint16_t val) {
   case RT_E: this->_regs.e = val & 0xFF; break;
   case RT_H: this->_regs.h = val & 0xFF; break;
   case RT_L: this->_regs.l = val & 0xFF; break;
-
   case RT_AF: *((uint16_t *)&this->_regs.a) = this->reverse(val); break;
   case RT_BC: *((uint16_t *)&this->_regs.b) = this->reverse(val); break;
   case RT_DE: *((uint16_t *)&this->_regs.d) = this->reverse(val); break;
@@ -53,7 +50,6 @@ void pbg_cpu::cpu_set_reg(reg_type rt, uint16_t val) {
     *((uint16_t *)&this->_regs.h) = this->reverse(val); 
     break;
   }
-
   case RT_PC: this->_regs.pc = val; break;
   case RT_SP: this->_regs.sp = val; break;
   case RT_NONE: break;

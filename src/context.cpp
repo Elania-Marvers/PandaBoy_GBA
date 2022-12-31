@@ -9,7 +9,6 @@ pbg_context::pbg_context(gba_emulator *emu_ptr)
   this->_cart_ptr = new pbg_cart(this);
   this->_ram_ptr = new pbg_ram(this);
   this->_io_ptr = new pbg_io(this);
-  this->_ppu_ptr = new pbg_ppu(this);
   this->_dma_ptr = new pbg_dma(this);
   this->_timer_ptr = new pbg_timer(this);
   this->_instruction_ptr = new pbg_instruction(this);
@@ -19,6 +18,7 @@ pbg_context::pbg_context(gba_emulator *emu_ptr)
   this->_dbg_ptr = new pbg_dbg(this);
   this->_interrupts_ptr = new pbg_interrupts(this);
   this->_ui_ptr = new pbg_ui(this);
+  this->_ppu_ptr = new pbg_ppu(this);
   this->_cpu_ptr = new pbg_cpu(this);
 }
 

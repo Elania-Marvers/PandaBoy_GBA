@@ -11,8 +11,29 @@ static pbg_ppu *ppu_ctx;
 pbg_ppu::pbg_ppu(pbg_context *ctx)
   : _context_ptr(ctx)
 {
-    std::cout << "🎮 " << RED << "[" << ORANGE << "Running PPU!" << RED << "]" << DEFAULT << " 🎮" << std::endl;
+  std::cout << "🎮 " << RED << "[" << ORANGE << "Running PPU!" << RED << "]" << DEFAULT << " 🎮" << std::endl;
   ppu_ctx = this;
+  this->current_frame = 0;
+  this->line_ticks = 0;
+  this->video_buffer = new uint32_t[YRES * XRES * sizeof(32)];
+  this->pfc.line_x = 0;
+  this->pfc.pushed_x = 0;
+  this->pfc.fetch_x = 0;
+  this->pfc.pixel_fifo.size = 0;
+  this->pfc.pixel_fifo.head = this->pfc.pixel_fifo.tail = NULL;
+  this->pfc.cur_fetch_state = FS_TILE;
+  this->line_sprites = 0;
+  this->fetched_entry_count = 0;
+  this->window_line = 0;
+  LCDS_MODE_SET(MODE_OAM);
+  memset(this->oam_ram, 0, sizeof(this->oam_ram));
+  memset(this->video_buffer, 0, YRES * XRES * sizeof(uint32_t));
+  
+}
+
+pbg_ppu::~ pbg_ppu()
+{
+  delete this->video_buffer;
 }
 
 void pbg_ppu::ppu_tick() {
