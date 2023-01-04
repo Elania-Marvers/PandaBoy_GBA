@@ -36,7 +36,7 @@ void pbg_timer::timer_tick()
     this->_tima++;
     if (this->_tima == 0xFF) {
       this->_tima = this->_tma;
-      //      cpu_request_interrupt(IT_TIMER);
+      this->_context_ptr->_interrupts_ptr->cpu_request_interrupt(IT_TIMER);
     }
   }
 }

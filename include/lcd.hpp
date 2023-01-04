@@ -1,5 +1,6 @@
 #ifndef		___LCD_HPP___
 #define		___LCD_HPP___
+#pragma once
 #include "common.hpp"
 #include "context.hpp"
 
@@ -28,8 +29,6 @@ namespace pandaboygba
   class pbg_context;
   class  pbg_lcd
   {
-  private:
-    pbg_context *		_context_ptr;
 
   public:
     //registers...
@@ -49,12 +48,14 @@ namespace pandaboygba
     uint32_t bg_colors[4];
     uint32_t sp1_colors[4];
     uint32_t sp2_colors[4];
+    pbg_context *		_context_ptr;
     
   public:
     pbg_lcd(pbg_context *);
     uint8_t lcd_read(uint16_t address);
     void lcd_write(uint16_t address, uint8_t value);
     void update_palette(uint8_t palette_data, uint8_t pal);
+
     
   };
 

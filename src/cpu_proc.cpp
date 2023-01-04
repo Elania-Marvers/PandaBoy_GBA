@@ -17,7 +17,7 @@ void pbg_cpu::cpu_set_flags(int8_t z, int8_t n, int8_t h, int8_t c)
 void pbg_cpu::proc_none()
 {
   std::cout << "INVALID INSTRUCTION!" << std::endl;
-    exit(-7);
+  exit(-7);
 }
 void pbg_cpu::proc_nop()
 {
@@ -25,167 +25,174 @@ void pbg_cpu::proc_nop()
 }
 
 reg_type rt_lookup[] = {
-    RT_B,
-    RT_C,
-    RT_D,
-    RT_E,
-    RT_H,
-    RT_L,
-    RT_HL,
-    RT_A
+  RT_B,
+  RT_C,
+  RT_D,
+  RT_E,
+  RT_H,
+  RT_L,
+  RT_HL,
+  RT_A
 };
 
 reg_type pbg_cpu::decode_reg(uint8_t reg)
 {
-    if (reg > 0b111)
-        return RT_NONE;
-    return rt_lookup[reg];
+  if (reg > 0b111)
+    return RT_NONE;
+  return rt_lookup[reg];
 }
 
 void pbg_cpu::proc_cb()
 {
-    uint8_t op = this->_fetched_data;
-    reg_type reg = this->decode_reg(op & 0b111);
-    uint8_t bit = (op >> 3) & 0b111;
-    uint8_t bit_op = (op >> 6) & 0b11;
-    uint8_t reg_val = this->cpu_read_reg8(reg);
-    this->_context_ptr->_emu_ptr->emu_cycles(1);
-    if (reg == RT_HL) {
-      this->_context_ptr->_emu_ptr->emu_cycles(2);
+  // printf("cb0 a[%04X] FD[%04X]\n", this->_regs.a, this->_fetched_data);
+  uint8_t op = this->_fetched_data;
+  reg_type reg = this->decode_reg(op & 0b111);
+  uint8_t bit = (op >> 3) & 0b111;
+  uint8_t bit_op = (op >> 6) & 0b11;
+  uint8_t reg_val = this->cpu_read_reg8(reg);
+  this->_context_ptr->_emu_ptr->emu_cycles(1);
+  if (reg == RT_HL) {
+    this->_context_ptr->_emu_ptr->emu_cycles(2);
+  }
+
+  //     printf("cb1 a[%04X] FD[%04X] op[%04X] reg[%04X] bit[%04X] bit_op[%04X] reg_val[%04X]\n", this->_regs.a, this->_fetched_data, op, reg, bit, bit_op, reg_val);
+  switch(bit_op) {
+  case 1:
+    //BIT
+    this->cpu_set_flags(!(reg_val & (1 << bit)), 0, 1, -1);
+    return;
+  case 2:
+    //RST
+    reg_val &= ~(1 << bit);
+    this->cpu_set_reg8(reg, reg_val);
+    // printf("reg_val[%04X]\n", reg_val);
+    // printf("cb2 a[%04X] FD[%04X] op[%04X] reg[%04X] bit[%04X] bit_op[%04X] reg_val[%04X]\n", this->_regs.a, this->_fetched_data, op, reg, bit, bit_op, reg_val);
+
+    return;
+  case 3:
+    //SET
+    reg_val |= (1 << bit);
+    this->cpu_set_reg8(reg, reg_val);
+    return;
+  }
+
+  bool flagC = CPU_FLAG_C;
+  switch(bit) {
+  case 0: {
+    //RLC
+    bool setC = false;
+    uint8_t result = (reg_val << 1) & 0xFF;
+    if ((reg_val & (1 << 7)) != 0) {
+      result |= 1;
+      setC = true;
     }
-    switch(bit_op) {
-        case 1:
-            //BIT
-	  this->cpu_set_flags(!(reg_val & (1 << bit)), 0, 1, -1);
-            return;
-        case 2:
-            //RST
-            reg_val &= ~(1 << bit);
-	    this->cpu_set_reg8(reg, reg_val);
-            return;
-        case 3:
-            //SET
-            reg_val |= (1 << bit);
-            this->cpu_set_reg8(reg, reg_val);
-            return;
+    this->cpu_set_reg8(reg, result);
+    this->cpu_set_flags(result == 0, false, false, setC);
+  } return;
+  case 1: {
+    //RRC
+    uint8_t old = reg_val;
+    reg_val >>= 1;
+    reg_val |= (old << 7);
+    this->cpu_set_reg8(reg, reg_val);
+    this->cpu_set_flags(!reg_val, false, false, old & 1);
+  } return;
+  case 2: {
+    //RL
+    uint8_t old = reg_val;
+    reg_val <<= 1;
+    reg_val |= flagC;
+    this->cpu_set_reg8(reg, reg_val);
+    this->cpu_set_flags(!reg_val, false, false, !!(old & 0x80));
+  } return;
+  case 3: {
+    //RR
+    uint8_t old = reg_val;
+    reg_val >>= 1;
+    reg_val |= (flagC << 7);
+    this->cpu_set_reg8(reg, reg_val);
+    this->cpu_set_flags(!reg_val, false, false, old & 1);
+  } return;
+  case 4: {
+    //SLA
+    uint8_t old = reg_val;
+    reg_val <<= 1;
+    this->cpu_set_reg8(reg, reg_val);
+    this->cpu_set_flags(!reg_val, false, false, !!(old & 0x80));
+  } return;
+  case 5: {
+    //SRA
+    uint8_t u = (int8_t)reg_val >> 1;
+    this->cpu_set_reg8(reg, u);
+    this->cpu_set_flags(!u, 0, 0, reg_val & 1);
+  } return;
+  case 6: {
+    //SWAP
+    reg_val = ((reg_val & 0xF0) >> 4) | ((reg_val & 0xF) << 4);
+    this->cpu_set_reg8(reg, reg_val);
+    this->cpu_set_flags(reg_val == 0, false, false, false);
+  } return;
+  case 7: {
+    //SRL
+    uint8_t u = reg_val >> 1;
+    this->cpu_set_reg8(reg, u);
+    this->cpu_set_flags(!u, 0, 0, reg_val & 1);
+  } return;
+  }
+  fprintf(stderr, "ERROR: INVALID CB: %02X", op);
+  NO_IMPL
     }
-    bool flagC = CPU_FLAG_C;
-    switch(bit) {
-        case 0: {
-            //RLC
-            bool setC = false;
-            uint8_t result = (reg_val << 1) & 0xFF;
-            if ((reg_val & (1 << 7)) != 0) {
-                result |= 1;
-                setC = true;
-            }
-            this->cpu_set_reg8(reg, result);
-            this->cpu_set_flags(result == 0, false, false, setC);
-        } return;
-        case 1: {
-            //RRC
-            uint8_t old = reg_val;
-            reg_val >>= 1;
-            reg_val |= (old << 7);
-            this->cpu_set_reg8(reg, reg_val);
-            this->cpu_set_flags(!reg_val, false, false, old & 1);
-        } return;
-        case 2: {
-            //RL
-            uint8_t old = reg_val;
-            reg_val <<= 1;
-            reg_val |= flagC;
-            this->cpu_set_reg8(reg, reg_val);
-            this->cpu_set_flags(!reg_val, false, false, !!(old & 0x80));
-        } return;
-        case 3: {
-            //RR
-            uint8_t old = reg_val;
-            reg_val >>= 1;
-            reg_val |= (flagC << 7);
-            this->cpu_set_reg8(reg, reg_val);
-            this->cpu_set_flags(!reg_val, false, false, old & 1);
-        } return;
-        case 4: {
-            //SLA
-            uint8_t old = reg_val;
-            reg_val <<= 1;
-            this->cpu_set_reg8(reg, reg_val);
-            this->cpu_set_flags(!reg_val, false, false, !!(old & 0x80));
-        } return;
-        case 5: {
-            //SRA
-            uint8_t u = (int8_t)reg_val >> 1;
-            this->cpu_set_reg8(reg, u);
-            this->cpu_set_flags(!u, 0, 0, reg_val & 1);
-        } return;
-        case 6: {
-            //SWAP
-            reg_val = ((reg_val & 0xF0) >> 4) | ((reg_val & 0xF) << 4);
-            this->cpu_set_reg8(reg, reg_val);
-            this->cpu_set_flags(reg_val == 0, false, false, false);
-        } return;
-        case 7: {
-            //SRL
-            uint8_t u = reg_val >> 1;
-            this->cpu_set_reg8(reg, u);
-            this->cpu_set_flags(!u, 0, 0, reg_val & 1);
-        } return;
-    }
-    fprintf(stderr, "ERROR: INVALID CB: %02X", op);
-    NO_IMPL
-}
 
 void pbg_cpu::proc_rlca()
 {
-    uint8_t u = this->_regs.a;
-    bool c = (u >> 7) & 1;
-    u = (u << 1) | c;
-    this->_regs.a = u;
-    this->cpu_set_flags(0, 0, 0, c);
+  uint8_t u = this->_regs.a;
+  bool c = (u >> 7) & 1;
+  u = (u << 1) | c;
+  this->_regs.a = u;
+  this->cpu_set_flags(0, 0, 0, c);
 }
 
 void pbg_cpu::proc_rrca()
 {
-    uint8_t b = this->_regs.a & 1;
-    this->_regs.a >>= 1;
-    this->_regs.a |= (b << 7);
-    this->cpu_set_flags(0, 0, 0, b);
+  uint8_t b = this->_regs.a & 1;
+  this->_regs.a >>= 1;
+  this->_regs.a |= (b << 7);
+  this->cpu_set_flags(0, 0, 0, b);
 }
 
 void pbg_cpu::proc_rla()
 {
-    uint8_t u = this->_regs.a;
-    uint8_t cf = CPU_FLAG_C;
-    uint8_t c = (u >> 7) & 1;
-    this->_regs.a = (u << 1) | cf;
-    this->cpu_set_flags(0, 0, 0, c);
+  uint8_t u = this->_regs.a;
+  uint8_t cf = CPU_FLAG_C;
+  uint8_t c = (u >> 7) & 1;
+  this->_regs.a = (u << 1) | cf;
+  this->cpu_set_flags(0, 0, 0, c);
 }
 
 void pbg_cpu::proc_stop()
 {
-    fprintf(stderr, "STOPPING!\n");
+  fprintf(stderr, "STOPPING!\n");
 }
 
 void pbg_cpu::proc_daa()
 {
-    uint8_t u = 0;
-    int fc = 0;
-    if (CPU_FLAG_H || (!CPU_FLAG_N && (this->_regs.a & 0xF) > 9))
-        u = 6;
-    if (CPU_FLAG_C || (!CPU_FLAG_N && this->_regs.a > 0x99))
-      {
-        u |= 0x60;
-        fc = 1;
+  uint8_t u = 0;
+  int fc = 0;
+  if (CPU_FLAG_H || (!CPU_FLAG_N && (this->_regs.a & 0xF) > 9))
+    u = 6;
+  if (CPU_FLAG_C || (!CPU_FLAG_N && this->_regs.a > 0x99))
+    {
+      u |= 0x60;
+      fc = 1;
     }
-    this->_regs.a += CPU_FLAG_N ? -u : u;
-    this->cpu_set_flags(this->_regs.a == 0, -1, 0, fc);
+  this->_regs.a += CPU_FLAG_N ? -u : u;
+  this->cpu_set_flags(this->_regs.a == 0, -1, 0, fc);
 }
 
 void pbg_cpu::proc_cpl()
 {
-    this->_regs.a = ~this->_regs.a;
-    this->cpu_set_flags(-1, 1, 1, -1);
+  this->_regs.a = ~this->_regs.a;
+  this->cpu_set_flags(-1, 1, 1, -1);
 }
 
 void pbg_cpu::proc_scf()
@@ -195,7 +202,7 @@ void pbg_cpu::proc_scf()
 
 void pbg_cpu::proc_ccf()
 {
-    this->cpu_set_flags(-1, 0, 0, CPU_FLAG_C ^ 1);
+  this->cpu_set_flags(-1, 0, 0, CPU_FLAG_C ^ 1);
 }
 
 void pbg_cpu::proc_halt()
@@ -232,7 +239,9 @@ void pbg_cpu::proc_or()
 
 void pbg_cpu::proc_cp()
 {
-  int n = (int)this->_regs.a - (int)this->_fetched_data;
+  //printf("a[%04X] FD[%04X]\n", this->_regs.a, this->_fetched_data);
+  int n = (int)this->_regs.a - (int) this->_fetched_data; //int
+  //   printf("n == %04X\n", n);
   this->cpu_set_flags(n == 0, 1, 
 		      ((int)this->_regs.a & 0x0F) - ((int)this->_fetched_data & 0x0F) < 0, n < 0);
 }
@@ -263,6 +272,7 @@ void pbg_cpu::proc_ld()
 	  this->_context_ptr->_emu_ptr->emu_cycles(1);
 	  this->_context_ptr->_bus_ptr->bus_write16(this->_mem_dest, this->_fetched_data);
         } else {
+
 	this->_context_ptr->_bus_ptr->bus_write(this->_mem_dest, this->_fetched_data);
       }
       this->_context_ptr->_emu_ptr->emu_cycles(1);
@@ -275,16 +285,31 @@ void pbg_cpu::proc_ld()
     this->cpu_set_reg(this->_cur_inst->_reg_1, this->cpu_read_reg(this->_cur_inst->_reg_2) + (int8_t) this->_fetched_data);
     return;
   }
+  /*
+    if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
+    this->_context_ptr->_ui_ptr->_ticks < 986184
+    )
+    printf("REG1[%04X] FD[%04X]\n", this->_cur_inst->_reg_1, this->_fetched_data);*/
   this->cpu_set_reg(this->_cur_inst->_reg_1, this->_fetched_data);
 }
 
 void pbg_cpu::proc_ldh()
 {
   if (this->_cur_inst->_reg_1 == RT_A)
-    this->cpu_set_reg(this->_cur_inst->_reg_1, this->_context_ptr->_bus_ptr->bus_read(0xFF00 | this->_fetched_data));
-  else 
+    {
+      //  printf("ldh1 a[%04X] FD[%04X] REG1[%04X] BR[%04X]\n", this->_regs.a, this->_fetched_data, this->_cur_inst->_reg_1, this->_context_ptr->_bus_ptr->bus_read(0xFF00 | this->_fetched_data));
+      this->cpu_set_reg(this->_cur_inst->_reg_1, this->_context_ptr->_bus_ptr->bus_read(0xFF00 | this->_fetched_data));
+      //  printf("ldh1 a[%04X] FD[%04X] REG1[%04X] BR[%04X]\n", this->_regs.a, this->_fetched_data, this->_cur_inst->_reg_1, this->_context_ptr->_bus_ptr->bus_read(0xFF00 | this->_fetched_data));
+    }
+  else {
+    //     printf("ldh2 mem_dest[%04X] regA[%04X]\n", this->_mem_dest, this->_regs.a);
     this->_context_ptr->_bus_ptr->bus_write(this->_mem_dest, this->_regs.a);
+       
+  }
+
+
   this->_context_ptr->_emu_ptr->emu_cycles(1);
+  //printf("ldh3 a[%04X] FD[%04X]\n", this->_regs.a, this->_fetched_data);
 }
 
 
@@ -313,6 +338,7 @@ void pbg_cpu::goto_addr(uint16_t addr, bool pushpc)
         }
       this->_regs.pc = addr;
       this->_context_ptr->_emu_ptr->emu_cycles(1);
+      //printf("PC[%04X]\n", this->_regs.pc);
     }
 }
 
@@ -340,6 +366,11 @@ void pbg_cpu::proc_rst()
 
 void pbg_cpu::proc_ret()
 {
+  /*      if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
+	  this->_context_ptr->_ui_ptr->_ticks < 986184
+	  ){
+	  printf("cond[%04X] ccond[%04X] \n", this->_cur_inst->_cond, this->check_cond());
+	  }*/
   if (this->_cur_inst->_cond != CT_NONE)
     this->_context_ptr->_emu_ptr->emu_cycles(1);
   if (this->check_cond())
@@ -351,6 +382,11 @@ void pbg_cpu::proc_ret()
       uint16_t n = (hi << 8) | lo;
       this->_regs.pc = n;
       this->_context_ptr->_emu_ptr->emu_cycles(1);
+      /*      if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
+	      this->_context_ptr->_ui_ptr->_ticks < 986184
+	      ){
+	      printf("PC[%04X] CPU_FD[%04X] \n", this->_regs.pc, this->_fetched_data);
+	      }*/
     }
 }
 
@@ -362,18 +398,18 @@ void pbg_cpu::proc_reti()
 
 void pbg_cpu::proc_pop()
 {
-    uint16_t lo = this->_context_ptr->_stack_ptr->stack_pop();
-    this->_context_ptr->_emu_ptr->emu_cycles(1);
-    uint16_t hi = this->_context_ptr->_stack_ptr->stack_pop();
-    this->_context_ptr->_emu_ptr->emu_cycles(1);
-    uint16_t n = (hi << 8) | lo;
-    this->cpu_set_reg(this->_cur_inst->_reg_1, n);
-    if (this->_cur_inst->_reg_1 == RT_AF)
-      this->cpu_set_reg(this->_cur_inst->_reg_1, n & 0xFFF0);
+  uint16_t lo = this->_context_ptr->_stack_ptr->stack_pop();
+  this->_context_ptr->_emu_ptr->emu_cycles(1);
+  uint16_t hi = this->_context_ptr->_stack_ptr->stack_pop();
+  this->_context_ptr->_emu_ptr->emu_cycles(1);
+  uint16_t n = (hi << 8) | lo;
+  this->cpu_set_reg(this->_cur_inst->_reg_1, n);
+  if (this->_cur_inst->_reg_1 == RT_AF)
+    this->cpu_set_reg(this->_cur_inst->_reg_1, n & 0xFFF0);
 }
 
 void pbg_cpu::proc_push()
-{
+{//FLAGOE
   uint16_t hi = (this->cpu_read_reg(this->_cur_inst->_reg_1) >> 8) & 0xFF;
   this->_context_ptr->_emu_ptr->emu_cycles(1);
   this->_context_ptr->_stack_ptr->stack_push(hi);
@@ -409,14 +445,14 @@ void pbg_cpu::proc_dec()
     this->_context_ptr->_emu_ptr->emu_cycles(1);
   if (this->_cur_inst->_reg_1 == RT_HL && this->_cur_inst->_mode == AM_MR)
     {
-    val = this->_context_ptr->_bus_ptr->bus_read(this->cpu_read_reg(RT_HL)) - 1;
-    this->_context_ptr->_bus_ptr->bus_write(this->cpu_read_reg(RT_HL), val);
-  }
+      val = this->_context_ptr->_bus_ptr->bus_read(this->cpu_read_reg(RT_HL)) - 1;
+      this->_context_ptr->_bus_ptr->bus_write(this->cpu_read_reg(RT_HL), val);
+    }
   else
     {
-    this->cpu_set_reg(this->_cur_inst->_reg_1, val);
-    val = this->cpu_read_reg(this->_cur_inst->_reg_1);
-  }
+      this->cpu_set_reg(this->_cur_inst->_reg_1, val);
+      val = this->cpu_read_reg(this->_cur_inst->_reg_1);
+    }
   if ((this->_cur_opcode & 0x0B) == 0x0B)
     return;
   this->cpu_set_flags(val == 0, 1, (val & 0x0F) == 0x0F, -1);
@@ -468,17 +504,17 @@ void pbg_cpu::proc_add()
   int c = (int) (this->cpu_read_reg(this->_cur_inst->_reg_1) & 0xFF) + (int) (this->_fetched_data & 0xFF) >= 0x100;
   if (is_16bit)
     {
-    z = -1;
-    h = (this->cpu_read_reg(this->_cur_inst->_reg_1) & 0xFFF) + (this->_fetched_data & 0xFFF) >= 0x1000;
-    uint32_t n = ((uint32_t) this->cpu_read_reg(this->_cur_inst->_reg_1)) + ((uint32_t) this->_fetched_data);
-    c = n >= 0x10000;
-  }
+      z = -1;
+      h = (this->cpu_read_reg(this->_cur_inst->_reg_1) & 0xFFF) + (this->_fetched_data & 0xFFF) >= 0x1000;
+      uint32_t n = ((uint32_t) this->cpu_read_reg(this->_cur_inst->_reg_1)) + ((uint32_t) this->_fetched_data);
+      c = n >= 0x10000;
+    }
   if (this->_cur_inst->_reg_1 == RT_SP)
     {
-    z = 0;
-    h = (this->cpu_read_reg(this->_cur_inst->_reg_1) & 0xF) + (this->_fetched_data & 0xF) >= 0x10;
-    c = (int) (this->cpu_read_reg(this->_cur_inst->_reg_1) & 0xFF) + (int) (this->_fetched_data & 0xFF) >= 0x100;
-  }
+      z = 0;
+      h = (this->cpu_read_reg(this->_cur_inst->_reg_1) & 0xF) + (this->_fetched_data & 0xF) >= 0x10;
+      c = (int) (this->cpu_read_reg(this->_cur_inst->_reg_1) & 0xFF) + (int) (this->_fetched_data & 0xFF) >= 0x100;
+    }
   this->cpu_set_reg(this->_cur_inst->_reg_1, val & 0xFFFF);
   this->cpu_set_flags(z, 0, h, c);
 }

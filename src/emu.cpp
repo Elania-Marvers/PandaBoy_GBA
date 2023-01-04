@@ -3,9 +3,12 @@
 using namespace pandaboygba;
 
 static gba_emulator *gba_ptr;
+static int toto = 0;
 
 void *cpu_run (void *p)
 {
+  //  int limit = 200000;
+  printf("Thread CPU RUN[%d]\n", gba_ptr->_context->_cpu_ptr->_halted);
   while(gba_ptr->getRunning())
     {
       if (gba_ptr->getPaused())
@@ -14,12 +17,18 @@ void *cpu_run (void *p)
 	  continue;
 	}
 
-      if (!gba_ptr->getContext()._cpu_ptr->cpu_step())
-	{
-	  printf("CPU Stopped\n");
-	  return 0;
-	}
+      //    if (toto <= limit)
+      {
+	if (!gba_ptr->getContext()._cpu_ptr->cpu_step())
+	  {
+	    printf("CPU Stopped\n");
+	    return 0;
+	  }
+      }
+      //    if (toto <= limit)
+      //  toto++;
     }
+  printf("Thread CPU STOP\n");
   return 0;
 }
 
@@ -144,6 +153,7 @@ void gba_emulator::emu_cycles(int cpu_cycles)
 	  this->_context->_ui_ptr->_ticks++;
 	  this->_context->_timer_ptr->timer_tick();
 	  this->_context->_ppu_ptr->ppu_tick();
+	  //  printf("addBR[PPU][%04X]\n", ((uint8_t *) this->_context->_lcd_ptr)[(0xFF00 | this->_context->_cpu_ptr->_fetched_data) - 0xFF40]);
         }
       this->_context->_dma_ptr->dma_tick();
     }

@@ -1,11 +1,9 @@
 #ifndef		___CONTEXT_HPP___
 #define		___CONTEXT_HPP___
 #include "common.hpp"
-#include "emu.hpp"
 
 #include "cpu.hpp"
 #include "bus.hpp"
-#include "cart.hpp"
 #include "ram.hpp"
 #include "io.hpp"
 #include "ppu.hpp"
@@ -18,6 +16,8 @@
 #include "dbg.hpp"
 #include "interrupts.hpp"
 #include "ui.hpp"
+#include "cart.hpp"
+#include "emu.hpp"
 
 namespace pandaboygba
 {

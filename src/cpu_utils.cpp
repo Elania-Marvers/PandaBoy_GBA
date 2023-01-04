@@ -32,8 +32,33 @@ uint16_t pbg_cpu::cpu_read_reg(reg_type rt) {
 }
 
 void pbg_cpu::cpu_set_reg(reg_type rt, uint16_t val) {
+  //      if (this->_context_ptr->_ui_ptr->_ticks > 985044 && 
+  //     this->_context_ptr->_ui_ptr->_ticks < 986184
+  //     )
+  //  printf("rt[%04X] val[%04X][%04X]\n", rt, val, val & 0xFF);
   switch(rt) {
-  case RT_A: this->_regs.a = val & 0xFF; break;
+  case RT_A: 
+    /*
+      if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
+      this->_context_ptr->_ui_ptr->_ticks < 986184
+      ){
+      printf("_fetched_data = %04X\n", this->_fetched_data);
+      printf("_reg a = %04X\n", this->_regs.a);
+      printf("val = %04X\n", val);
+      }
+    */
+    this->_regs.a = val & 0xFF; 
+  
+    /*
+      if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
+      this->_context_ptr->_ui_ptr->_ticks < 986184
+      ){
+      printf("_fetched_data = %04X\n", this->_fetched_data);
+      printf("_reg a = %04X\n", this->_regs.a);
+      printf("val = %04X\n", val);
+      }
+    */
+    break;
   case RT_F: this->_regs.f = val & 0xFF; break;
   case RT_B: this->_regs.b = val & 0xFF; break;
   case RT_C: {
@@ -43,9 +68,18 @@ void pbg_cpu::cpu_set_reg(reg_type rt, uint16_t val) {
   case RT_E: this->_regs.e = val & 0xFF; break;
   case RT_H: this->_regs.h = val & 0xFF; break;
   case RT_L: this->_regs.l = val & 0xFF; break;
-  case RT_AF: *((uint16_t *)&this->_regs.a) = this->reverse(val); break;
-  case RT_BC: *((uint16_t *)&this->_regs.b) = this->reverse(val); break;
-  case RT_DE: *((uint16_t *)&this->_regs.d) = this->reverse(val); break;
+  case RT_AF: {
+    *((uint16_t *)&this->_regs.a) = this->reverse(val); 
+    break;
+  }
+  case RT_BC: {
+    *((uint16_t *)&this->_regs.b) = this->reverse(val); 
+    break;
+  }
+  case RT_DE: {
+    *((uint16_t *)&this->_regs.d) = this->reverse(val); 
+    break;
+  }
   case RT_HL: {
     *((uint16_t *)&this->_regs.h) = this->reverse(val); 
     break;
@@ -94,9 +128,9 @@ void pbg_cpu::cpu_set_reg8(reg_type rt, uint8_t val) {
 }
 
 uint8_t pbg_cpu::cpu_get_int_flags() {
-    return this->_int_flags;
+  return this->_int_flags;
 }
 
 void pbg_cpu::cpu_set_int_flags(uint8_t value) {
-    this->_int_flags = value;
+  this->_int_flags = value;
 }

@@ -38,6 +38,7 @@ pbg_ppu::~ pbg_ppu()
 
 void pbg_ppu::ppu_tick() {
   this->line_ticks++;
+  //  printf("LCDS MODE [%04X]\n", LCDS_MODE);
   switch(LCDS_MODE) {
   case MODE_OAM:
     this->ppu_mode_oam();
@@ -56,27 +57,27 @@ void pbg_ppu::ppu_tick() {
 
 
 void pbg_ppu::ppu_oam_write(uint16_t address, uint8_t value) {
-    if (address >= 0xFE00)
-        address -= 0xFE00;
-    uint8_t *p = (uint8_t *) this->oam_ram;
-    p[address] = value;
+  if (address >= 0xFE00)
+    address -= 0xFE00;
+  uint8_t *p = (uint8_t *) this->oam_ram;
+  p[address] = value;
 }
 
 uint8_t pbg_ppu::ppu_oam_read(uint16_t address) {
-    if (address >= 0xFE00)
-        address -= 0xFE00;
-    uint8_t *p = (uint8_t *) this->oam_ram;
-    return p[address];
+  if (address >= 0xFE00)
+    address -= 0xFE00;
+  uint8_t *p = (uint8_t *) this->oam_ram;
+  return p[address];
 }
 
 void pbg_ppu::ppu_vram_write(uint16_t address, uint8_t value) {
-    this->vram[address - 0x8000] = value;
+  this->vram[address - 0x8000] = value;
 }
 
 uint8_t pbg_ppu::ppu_vram_read(uint16_t address) {
-    return this->vram[address - 0x8000];
+  return this->vram[address - 0x8000];
 }
 
 pandaboygba::pbg_ppu *pandaboygba::ppu_get_context() {
-    return ppu_ctx;
+  return ppu_ctx;
 }

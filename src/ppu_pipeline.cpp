@@ -46,7 +46,7 @@ uint32_t pbg_ppu::fetch_sprite_pixels(int bit, uint32_t color, uint8_t bg_color)
     {
       int sp_x = (ppu_get_context()->fetched_entries[i].x - 8) + ((lcd_get_context()->scroll_x % 8));
       if (sp_x + 8 < ppu_get_context()->pfc.fifo_x)  //past pixel point already...
-	  continue;
+	continue;
       int offset = ppu_get_context()->pfc.fifo_x - sp_x;
       if (offset < 0 || offset > 7) 	//out of bounds..
 	continue;

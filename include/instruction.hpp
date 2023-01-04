@@ -2,17 +2,8 @@
 #define		___INSTRUCTION_HPP___
 #include <map>
 #include "common.hpp"
-
-
-typedef struct {
-    in_type		_type;
-    addr_mode		_mode;
-    reg_type		_reg_1;
-    reg_type		_reg_2;
-    cond_type		_cond;
-    uint8_t 		_param;
-}		instruction_t;
-
+#include "enum.hpp"
+#include "cpu.hpp"
 
 namespace pandaboygba
 {
@@ -27,6 +18,7 @@ namespace pandaboygba
     ~pbg_instruction();
     instruction_t *instruction_by_opcode(uint8_t opcode);
     char *inst_name(in_type t);
+    void inst_to_str(char *str);
   };
 }
 #endif

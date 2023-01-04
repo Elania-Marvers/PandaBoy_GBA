@@ -129,4 +129,35 @@ typedef enum {
     FS_PUSH
 } fetch_state;
 
+typedef struct {
+    in_type		_type;
+    addr_mode		_mode;
+    reg_type		_reg_1;
+    reg_type		_reg_2;
+    cond_type		_cond;
+    uint8_t 		_param;
+}		instruction_t;
+
+
+
+
+#pragma once
+typedef struct		s_rom_header{
+  uint8_t		entry[4];
+  uint8_t		logo[0x30]; // 48bits !
+  char			title[16];
+  uint16_t		new_lic_code;
+  uint8_t		sgb_flag;
+  uint8_t		type;
+  uint8_t		rom_size;
+  uint8_t		ram_size;
+  uint8_t		dest_code;
+  uint8_t		lic_code;
+  uint8_t		version;
+  uint8_t		checksum;
+  uint16_t		global_checksum;
+}			t_rom_header;
+
+
+
 #endif

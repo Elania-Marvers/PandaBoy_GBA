@@ -17,12 +17,12 @@ namespace pandaboygba
     bool		_paused;	// This represent if the emulator is un pause
     bool		_running;	// This represent if the emulator is running
     bool		_die;		// This is the die xD
-    pbg_context *	_context;	// This represent the context
     void (*_main_loop)(gba_emulator *);	// This is the main event loop
     void (*_event_loop)(gba_emulator *);// This is the event input loop
     
     
   public:
+    pbg_context *	_context;	// This represent the context
     bool		getPaused()	const;
     bool		getRunning()	const;
     pbg_context&	getContext();

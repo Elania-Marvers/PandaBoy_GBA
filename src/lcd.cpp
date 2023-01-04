@@ -12,17 +12,16 @@ pbg_lcd::pbg_lcd(pbg_context *ctx)
   lcd_ctx = this;
 
   this->lcdc = 0x91;
-  this->scroll_x = 0;
-  this->scroll_y = 0;
-  this->ly = 0;
-  this->ly_compare = 0;
+  this->scroll_x = 0x00;
+  this->scroll_y = 0x00;
+  this->ly = 0x00;
+  this->ly_compare = 0x00;
   this->bg_palette = 0xFC;
   this->obj_palette[0] = 0xFF;
   this->obj_palette[1] = 0xFF;
-  this->win_y = 0;
-  this->win_x = 0;
-
-  for (int i=0; i<4; i++) {
+  this->win_y = 0x00;
+  this->win_x = 0x00;
+  for (int i = 0; i < 4; i++) {
     this->bg_colors[i] = colors_default[i];
     this->sp1_colors[i] = colors_default[i];
     this->sp2_colors[i] = colors_default[i];
@@ -34,6 +33,7 @@ uint8_t pbg_lcd::lcd_read(uint16_t address)
 {
   uint8_t offset = (address - 0xFF40);
   uint8_t *p = (uint8_t *) lcd_ctx;
+  // printf("address[%04X] offset[%04X] p[offset] [%04X]\n", address, offset, p[offset]);
   return p[offset];  
 }
 
@@ -67,5 +67,5 @@ void pbg_lcd::update_palette(uint8_t palette_data, uint8_t pal)
 
 pandaboygba::pbg_lcd *pandaboygba::lcd_get_context()
 {
-    return lcd_ctx;
+  return lcd_ctx;
 }

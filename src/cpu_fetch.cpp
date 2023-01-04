@@ -8,6 +8,9 @@ void pbg_cpu::fetch_data() {
   if (this->_cur_inst == NULL) {
     return;
   }
+
+
+
   switch(this->_cur_inst->_mode) {
   case AM_IMP: return;
   case AM_R:
@@ -48,10 +51,24 @@ void pbg_cpu::fetch_data() {
     this->_context_ptr->_emu_ptr->emu_cycles(1);
   } return;
 
-  case AM_R_HLI:
+  case AM_R_HLI://7
+    /*
+      if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
+      this->_context_ptr->_ui_ptr->_ticks < 986184)
+      {
+      printf("FD[%04X] REG2[%04X] CRR[%04X] BR[%04X]\n", this->_fetched_data, this->_cur_inst->_reg_2, this->_context_ptr->_cpu_ptr->cpu_read_reg(this->_cur_inst->_reg_2), this->_context_ptr->_bus_ptr->bus_read(this->_context_ptr->_cpu_ptr->cpu_read_reg(this->_cur_inst->_reg_2)));
+      }
+    */
     this->_fetched_data = this->_context_ptr->_bus_ptr->bus_read(this->_context_ptr->_cpu_ptr->cpu_read_reg(this->_cur_inst->_reg_2));
     this->_context_ptr->_emu_ptr->emu_cycles(1);
     this->_context_ptr->_cpu_ptr->cpu_set_reg(RT_HL, this->_context_ptr->_cpu_ptr->cpu_read_reg(RT_HL) + 1);
+    /*
+      if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
+      this->_context_ptr->_ui_ptr->_ticks < 986184)
+      {
+      printf("FD[%04X] REG2[%04X] CRR[%04X] BR[%04X]\n", this->_fetched_data, this->_cur_inst->_reg_2, this->_context_ptr->_cpu_ptr->cpu_read_reg(this->_cur_inst->_reg_2), this->_context_ptr->_bus_ptr->bus_read(this->_context_ptr->_cpu_ptr->cpu_read_reg(this->_cur_inst->_reg_2)));
+      }
+    */
     return;
   case AM_R_HLD:
     this->_fetched_data = this->_context_ptr->_bus_ptr->bus_read(this->_context_ptr->_cpu_ptr->cpu_read_reg(this->_cur_inst->_reg_2));

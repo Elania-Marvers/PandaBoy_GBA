@@ -5,7 +5,7 @@ using namespace pandaboygba;
 pbg_gamepad::pbg_gamepad(pbg_context *ctx)
   : _context_ptr(ctx)
 {
-std::cout << "🎮 " << RED << "[" << ORANGE << "Running GAMEPAD!" << RED << "]" << DEFAULT << " 🎮" << std::endl;  
+  std::cout << "🎮 " << RED << "[" << ORANGE << "Running GAMEPAD!" << RED << "]" << DEFAULT << " 🎮" << std::endl;  
 }
 
 bool pbg_gamepad::gamepad_button_sel()

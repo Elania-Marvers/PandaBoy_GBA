@@ -34,5 +34,6 @@ namespace std {
     return __os.put(__os.widen('\t'));
   }
 }
+//namespace pandaboygba{}
 
 #endif

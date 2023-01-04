@@ -25,12 +25,20 @@ pbg_bus::pbg_bus(pbg_context	*ctx)
 
 uint8_t	pbg_bus::bus_read(uint16_t	address)
 {
+  /*    if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
+	this->_context_ptr->_ui_ptr->_ticks < 986184)
+	printf("bus address[%04X]\n", address);*/
   if (address < 0x8000) 			//ROM Data
     return this->_context_ptr->_cart_ptr->cart_read(address);		// CART
   else if (address < 0xA000) 			//Char/Map Data
     return this->_context_ptr->_ppu_ptr->ppu_vram_read(address);	// PPU
   else if (address < 0xC000) 			//Cartridge RAM
-    return this->_context_ptr->_cart_ptr->cart_read(address);
+    {
+      /*if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
+	this->_context_ptr->_ui_ptr->_ticks < 986184)
+	printf("DEBUGb [%04X]\n", this->_context_ptr->_cart_ptr->cart_read(address));*/
+      return this->_context_ptr->_cart_ptr->cart_read(address);
+    }
   else if (address < 0xE000) 			//WRAM (Working RAM)
     return this->_context_ptr->_ram_ptr->wram_read(address);		// RAM
   else if (address < 0xFE00) 			//reserved echo ram...
@@ -51,6 +59,7 @@ uint8_t	pbg_bus::bus_read(uint16_t	address)
 void	pbg_bus::bus_write(uint16_t	address,
 			   uint8_t	value)
 {
+  //  printf("bus_write[%04X|%04X]\n", address, value);
   if (address < 0x8000) 		//ROM Data
     this->_context_ptr->_cart_ptr->cart_write(address, value);
   else if (address < 0xA000) 		//Char/Map Data
@@ -67,11 +76,18 @@ void	pbg_bus::bus_write(uint16_t	address,
     this->_context_ptr->_ppu_ptr->ppu_oam_write(address, value);
   } else if (address < 0xFF00) {	//unusable reserved
   } else if (address < 0xFF80)		//IO Registers...
-    this->_context_ptr->_io_ptr->io_write(address, value);
+    { 
+      this->_context_ptr->_io_ptr->io_write(address, value);
+    }
   else if (address == 0xFFFF)		//CPU SET ENABLE REGISTER
     this->_context_ptr->_cpu_ptr->cpu_set_ie_register(value);
   else 
-    this->_context_ptr->_ram_ptr->hram_write(address, value);
+    {
+      // printf("too\n");
+      this->_context_ptr->_ram_ptr->hram_write(address, value);
+    }
+
+  //printf("bus_write[%04X|%04X]\n", address, value);
 }
 
 

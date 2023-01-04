@@ -2,10 +2,10 @@
 #define		___CPU_HPP___
 #include "common.hpp"
 #include "register.hpp"
-#include "instruction.hpp"
+#include "enum.hpp"
 #include "context.hpp"
 #include <stdbool.h>
-#define CPU_DEBUG 0
+#define CPU_DEBUG 1
 #define CPU_FLAG_Z BIT(cpu_get_ctx()->_regs.f, 7)
 #define CPU_FLAG_N BIT(cpu_get_ctx()->_regs.f, 6)
 #define CPU_FLAG_H BIT(cpu_get_ctx()->_regs.f, 5)
@@ -19,8 +19,8 @@ namespace pandaboygba
   class  pbg_cpu
   {
   public:
-    pbg_context	*	_context_ptr;
     t_register		_regs;
+    pbg_context	*	_context_ptr;
     uint16_t		_fetched_data;
     uint16_t		_mem_dest;
     bool		_dest_is_mem;

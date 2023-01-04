@@ -7,15 +7,21 @@ static char serial_data[2];
 pbg_io::pbg_io(pbg_context *ctx)
   : _context_ptr(ctx)
 {
-std::cout << "🎮 " << RED << "[" << ORANGE << "Running IO!" << RED << "]" << DEFAULT << " 🎮" << std::endl;  
+  std::cout << "🎮 " << RED << "[" << ORANGE << "Running IO!" << RED << "]" << DEFAULT << " 🎮" << std::endl;  
 }
 
 uint8_t pbg_io::io_read(uint16_t address) {
+  // printf("io address[%04X]\n", address);
   if (address == 0xFF00)
     return this->_context_ptr->_gamepad_ptr->gamepad_get_output();
   if (address == 0xFF01)
     return serial_data[0];
   if (address == 0xFF02)
+    /*
+      if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
+      this->_context_ptr->_ui_ptr->_ticks < 986184)
+      printf("SD[1]=%04X\n", serial_data[1]);
+    */
     return serial_data[1];
   if (BETWEEN(address, 0xFF04, 0xFF07))
     return this->_context_ptr->_timer_ptr->timer_read(address);
@@ -30,6 +36,7 @@ uint8_t pbg_io::io_read(uint16_t address) {
 }
 
 void pbg_io::io_write(uint16_t address, uint8_t value) {
+  //printf("io_write(%d) [%d]\n", address, value);
   if (address == 0xFF00) {
     this->_context_ptr->_gamepad_ptr->gamepad_set_sel(value);
     return;

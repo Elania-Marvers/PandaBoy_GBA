@@ -72,6 +72,8 @@ void pbg_ppu::load_line_sprites()
 
 void pbg_ppu::ppu_mode_oam()
 {
+  //	  printf("TICKS FOR OAM = %04X\n", ppu_get_context()->line_ticks);
+
   if (ppu_get_context()->line_ticks >= 80)
     {
       LCDS_MODE_SET(MODE_XFER);
@@ -139,7 +141,7 @@ void pbg_ppu::ppu_mode_hblank()
 	      uint32_t fps = frame_count;
 	      start_timer = end;
 	      frame_count = 0;
-	      printf("FPS: %d\n", fps);
+	      //printf("FPS: %d\n", fps);
 	      if (this->_context_ptr->_cart_ptr->cart_need_save())
 		this->_context_ptr->_cart_ptr->cart_battery_save();
 	    }
