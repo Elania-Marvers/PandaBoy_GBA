@@ -18,27 +18,30 @@ void pbg_timer::timer_tick()
   uint16_t prev_div = this->_div;
   bool timer_update = false;
   this->_div++;
-  switch(this->_tac & (0b11)) {
-  case 0b00:
-    timer_update = (prev_div & (1 << 9)) && (!(this->_div & (1 << 9)));
-    break;
-  case 0b01:
-    timer_update = (prev_div & (1 << 3)) && (!(this->_div & (1 << 3)));
-    break;
-  case 0b10:
-    timer_update = (prev_div & (1 << 5)) && (!(this->_div & (1 << 5)));
-    break;
-  case 0b11:
-    timer_update = (prev_div & (1 << 7)) && (!(this->_div & (1 << 7)));
-    break;
-  }
-  if (timer_update && this->_tac & (1 << 2)) {
-    this->_tima++;
-    if (this->_tima == 0xFF) {
-      this->_tima = this->_tma;
-      this->_context_ptr->_interrupts_ptr->cpu_request_interrupt(IT_TIMER);
+  switch(this->_tac & (0b11)) 
+    {
+    case 0b00:
+      timer_update = (prev_div & (1 << 9)) && (!(this->_div & (1 << 9)));
+      break;
+    case 0b01:
+      timer_update = (prev_div & (1 << 3)) && (!(this->_div & (1 << 3)));
+      break;
+    case 0b10:
+      timer_update = (prev_div & (1 << 5)) && (!(this->_div & (1 << 5)));
+      break;
+    case 0b11:
+      timer_update = (prev_div & (1 << 7)) && (!(this->_div & (1 << 7)));
+      break;
     }
-  }
+  if (timer_update && this->_tac & (1 << 2)) 
+    {
+      this->_tima++;
+      if (this->_tima == 0xFF) 
+	{
+	  this->_tima = this->_tma;
+	  this->_context_ptr->_interrupts_ptr->cpu_request_interrupt(IT_TIMER);
+	}
+    }
 }
 
 void pbg_timer::timer_write(uint16_t address, uint8_t value)

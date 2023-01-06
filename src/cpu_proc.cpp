@@ -44,7 +44,6 @@ reg_type pbg_cpu::decode_reg(uint8_t reg)
 
 void pbg_cpu::proc_cb()
 {
-  // printf("cb0 a[%04X] FD[%04X]\n", this->_regs.a, this->_fetched_data);
   uint8_t op = this->_fetched_data;
   reg_type reg = this->decode_reg(op & 0b111);
   uint8_t bit = (op >> 3) & 0b111;
@@ -54,8 +53,6 @@ void pbg_cpu::proc_cb()
   if (reg == RT_HL) {
     this->_context_ptr->_emu_ptr->emu_cycles(2);
   }
-
-  //     printf("cb1 a[%04X] FD[%04X] op[%04X] reg[%04X] bit[%04X] bit_op[%04X] reg_val[%04X]\n", this->_regs.a, this->_fetched_data, op, reg, bit, bit_op, reg_val);
   switch(bit_op) {
   case 1:
     //BIT
@@ -65,9 +62,6 @@ void pbg_cpu::proc_cb()
     //RST
     reg_val &= ~(1 << bit);
     this->cpu_set_reg8(reg, reg_val);
-    // printf("reg_val[%04X]\n", reg_val);
-    // printf("cb2 a[%04X] FD[%04X] op[%04X] reg[%04X] bit[%04X] bit_op[%04X] reg_val[%04X]\n", this->_regs.a, this->_fetched_data, op, reg, bit, bit_op, reg_val);
-
     return;
   case 3:
     //SET
@@ -239,11 +233,8 @@ void pbg_cpu::proc_or()
 
 void pbg_cpu::proc_cp()
 {
-  //printf("a[%04X] FD[%04X]\n", this->_regs.a, this->_fetched_data);
-  int n = (int)this->_regs.a - (int) this->_fetched_data; //int
-  //   printf("n == %04X\n", n);
-  this->cpu_set_flags(n == 0, 1, 
-		      ((int)this->_regs.a & 0x0F) - ((int)this->_fetched_data & 0x0F) < 0, n < 0);
+  int n = (int)this->_regs.a - (int) this->_fetched_data;
+  this->cpu_set_flags(n == 0, 1, ((int)this->_regs.a & 0x0F) - ((int)this->_fetched_data & 0x0F) < 0, n < 0);
 }
 
 void pbg_cpu::proc_di()
@@ -285,31 +276,18 @@ void pbg_cpu::proc_ld()
     this->cpu_set_reg(this->_cur_inst->_reg_1, this->cpu_read_reg(this->_cur_inst->_reg_2) + (int8_t) this->_fetched_data);
     return;
   }
-  /*
-    if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
-    this->_context_ptr->_ui_ptr->_ticks < 986184
-    )
-    printf("REG1[%04X] FD[%04X]\n", this->_cur_inst->_reg_1, this->_fetched_data);*/
   this->cpu_set_reg(this->_cur_inst->_reg_1, this->_fetched_data);
 }
 
 void pbg_cpu::proc_ldh()
 {
   if (this->_cur_inst->_reg_1 == RT_A)
-    {
-      //  printf("ldh1 a[%04X] FD[%04X] REG1[%04X] BR[%04X]\n", this->_regs.a, this->_fetched_data, this->_cur_inst->_reg_1, this->_context_ptr->_bus_ptr->bus_read(0xFF00 | this->_fetched_data));
-      this->cpu_set_reg(this->_cur_inst->_reg_1, this->_context_ptr->_bus_ptr->bus_read(0xFF00 | this->_fetched_data));
-      //  printf("ldh1 a[%04X] FD[%04X] REG1[%04X] BR[%04X]\n", this->_regs.a, this->_fetched_data, this->_cur_inst->_reg_1, this->_context_ptr->_bus_ptr->bus_read(0xFF00 | this->_fetched_data));
-    }
+    this->cpu_set_reg(this->_cur_inst->_reg_1, this->_context_ptr->_bus_ptr->bus_read(0xFF00 | this->_fetched_data));
   else {
-    //     printf("ldh2 mem_dest[%04X] regA[%04X]\n", this->_mem_dest, this->_regs.a);
     this->_context_ptr->_bus_ptr->bus_write(this->_mem_dest, this->_regs.a);
        
   }
-
-
   this->_context_ptr->_emu_ptr->emu_cycles(1);
-  //printf("ldh3 a[%04X] FD[%04X]\n", this->_regs.a, this->_fetched_data);
 }
 
 
@@ -338,7 +316,6 @@ void pbg_cpu::goto_addr(uint16_t addr, bool pushpc)
         }
       this->_regs.pc = addr;
       this->_context_ptr->_emu_ptr->emu_cycles(1);
-      //printf("PC[%04X]\n", this->_regs.pc);
     }
 }
 
@@ -366,11 +343,6 @@ void pbg_cpu::proc_rst()
 
 void pbg_cpu::proc_ret()
 {
-  /*      if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
-	  this->_context_ptr->_ui_ptr->_ticks < 986184
-	  ){
-	  printf("cond[%04X] ccond[%04X] \n", this->_cur_inst->_cond, this->check_cond());
-	  }*/
   if (this->_cur_inst->_cond != CT_NONE)
     this->_context_ptr->_emu_ptr->emu_cycles(1);
   if (this->check_cond())
@@ -382,11 +354,6 @@ void pbg_cpu::proc_ret()
       uint16_t n = (hi << 8) | lo;
       this->_regs.pc = n;
       this->_context_ptr->_emu_ptr->emu_cycles(1);
-      /*      if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
-	      this->_context_ptr->_ui_ptr->_ticks < 986184
-	      ){
-	      printf("PC[%04X] CPU_FD[%04X] \n", this->_regs.pc, this->_fetched_data);
-	      }*/
     }
 }
 

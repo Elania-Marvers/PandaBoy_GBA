@@ -29,51 +29,50 @@ void pbg_ppu::load_line_sprites()
   int cur_y = lcd_get_context()->ly;
   uint8_t sprite_height = LCDC_OBJ_HEIGHT;
   memset(ppu_get_context()->line_entry_array, 0, sizeof(ppu_get_context()->line_entry_array));
-  for (int i=0; i<40; i++) {
-    oam_entry e = ppu_get_context()->oam_ram[i];
-    if (!e.x)
-      continue;	//x = 0 means not visible...
-    if (ppu_get_context()->line_sprite_count >= 10)
-      break;	//max 10 sprites per line...
-    if (e.y <= cur_y + 16 && e.y + sprite_height > cur_y + 16)
-      {
-	//this sprite is on the current line.
-	oam_line_entry *entry = &ppu_get_context()->line_entry_array[ppu_get_context()->line_sprite_count++];
-	entry->entry = e;
-	entry->next = NULL;
-	if (!ppu_get_context()->line_sprites || ppu_get_context()->line_sprites->entry.x > e.x)
-	  {
-	    entry->next = ppu_get_context()->line_sprites;
-	    ppu_get_context()->line_sprites = entry;
-	    continue;
-	  }
-	//do some sorting...
-	oam_line_entry *le = ppu_get_context()->line_sprites;
-	oam_line_entry *prev = le;
-	while(le)
-	  {
-	    if (le->entry.x > e.x)
-	      {
-		prev->next = entry;
-		entry->next = le;
-		break;
-	      }
-	    if (!le->next)
-	      {
-		le->next = entry;
-		break;
-	      }
-	    prev = le;
-	    le = le->next;
-	  }
-      }
-  }
+  for (int i=0; i<40; i++) 
+    {
+      oam_entry e = ppu_get_context()->oam_ram[i];
+      if (!e.x)
+	continue;	//x = 0 means not visible...
+      if (ppu_get_context()->line_sprite_count >= 10)
+	break;	//max 10 sprites per line...
+      if (e.y <= cur_y + 16 && e.y + sprite_height > cur_y + 16)
+	{
+	  //this sprite is on the current line.
+	  oam_line_entry *entry = &ppu_get_context()->line_entry_array[ppu_get_context()->line_sprite_count++];
+	  entry->entry = e;
+	  entry->next = NULL;
+	  if (!ppu_get_context()->line_sprites || ppu_get_context()->line_sprites->entry.x > e.x)
+	    {
+	      entry->next = ppu_get_context()->line_sprites;
+	      ppu_get_context()->line_sprites = entry;
+	      continue;
+	    }
+	  //do some sorting...
+	  oam_line_entry *le = ppu_get_context()->line_sprites;
+	  oam_line_entry *prev = le;
+	  while(le)
+	    {
+	      if (le->entry.x > e.x)
+		{
+		  prev->next = entry;
+		  entry->next = le;
+		  break;
+		}
+	      if (!le->next)
+		{
+		  le->next = entry;
+		  break;
+		}
+	      prev = le;
+	      le = le->next;
+	    }
+	}
+    }
 }
 
 void pbg_ppu::ppu_mode_oam()
 {
-  //	  printf("TICKS FOR OAM = %04X\n", ppu_get_context()->line_ticks);
-
   if (ppu_get_context()->line_ticks >= 80)
     {
       LCDS_MODE_SET(MODE_XFER);
@@ -118,7 +117,6 @@ void pbg_ppu::ppu_mode_vblank()
     }
 }
 
-
 void pbg_ppu::ppu_mode_hblank()
 {
   if (ppu_get_context()->line_ticks >= TICKS_PER_LINE)
@@ -132,16 +130,17 @@ void pbg_ppu::ppu_mode_hblank()
 	    this->_context_ptr->_interrupts_ptr->cpu_request_interrupt(IT_LCD_STAT);
 	  ppu_get_context()->current_frame++;
 	  //calc FPS...
+	  this->_context_ptr->_ui_ptr->setTicks(0);
 	  uint32_t end = this->_context_ptr->_ui_ptr->getTicks();
 	  uint32_t frame_time = end - prev_frame_time;
 	  if (frame_time < target_frame_time) 
-	    this->_context_ptr->_ui_ptr->delay((target_frame_time - frame_time));
-      	  if (end - start_timer >= 1000)
+	    this->_context_ptr->_ui_ptr->delay(target_frame_time - frame_time);
+   	  if (end - start_timer >= 1000)
 	    {
 	      uint32_t fps = frame_count;
 	      start_timer = end;
 	      frame_count = 0;
-	      //printf("FPS: %d\n", fps);
+	      //	      printf("FPS: %d\n", fps);
 	      if (this->_context_ptr->_cart_ptr->cart_need_save())
 		this->_context_ptr->_cart_ptr->cart_battery_save();
 	    }

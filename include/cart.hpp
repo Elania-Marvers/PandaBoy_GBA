@@ -44,19 +44,15 @@ namespace pandaboygba
     uint32_t 		GetRomSize()	const;
     uint8_t *		GetRomData()	const;
     const bool		cart_need_save();
-    
     void		setRomHeader(t_rom_header *);
     void		setFileName(char *);
     void		setRomSize(uint32_t);
     void		setRomData(uint8_t *);
-    
     pbg_cart(pbg_context *);
     ~pbg_cart();
-    
     bool		cart_load(const char *);
     uint8_t		cart_read(uint16_t	address)	const;
     void		cart_write(uint16_t	address, uint8_t	value);
-
     void		cart_battery_load();
     void		cart_battery_save();
     void		cart_setup_banking();

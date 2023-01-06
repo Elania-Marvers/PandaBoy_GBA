@@ -11,10 +11,11 @@ pbg_ram::pbg_ram (pbg_context *ctx)
 uint8_t pbg_ram::wram_read(uint16_t address)
 {
   address -= 0xC000;
-  if (address >= 0x2000) {
-    printf("INVALID WRAM ADDR %08X\n", address + 0xC000);
-    exit(-1);
-  }
+  if (address >= 0x2000) 
+    {
+      std::cerr << "INVALID WRAM ADDR " << std::hex << std::setw(8) << std::setfill('0') << (address + 0xC000) << std::endl;
+      exit(-1);
+    }
   return this->wram[address];
 }
 

@@ -1,19 +1,19 @@
 #ifndef		___ENUM_HPP___
 #define		___ENUM_HPP___
 
-  typedef enum {
-    MODE_HBLANK,
-    MODE_VBLANK,
-    MODE_OAM,
-    MODE_XFER
-  } lcd_mode;
+typedef enum {
+  MODE_HBLANK,
+  MODE_VBLANK,
+  MODE_OAM,
+  MODE_XFER
+} lcd_mode;
 
-  typedef enum {
-    SS_HBLANK = (1 << 3),
-    SS_VBLANK = (1 << 4),
-    SS_OAM = (1 << 5),
-    SS_LYC = (1 << 6),
-  } stat_src;
+typedef enum {
+  SS_HBLANK = (1 << 3),
+  SS_VBLANK = (1 << 4),
+  SS_OAM = (1 << 5),
+  SS_LYC = (1 << 6),
+} stat_src;
 
 typedef enum {
   AM_IMP,
@@ -113,34 +113,73 @@ typedef enum {
   CT_NONE, CT_NZ, CT_Z, CT_NC, CT_C
 } cond_type;
 
-  typedef enum {
-    IT_VBLANK = 1,
-    IT_LCD_STAT = 2,
-    IT_TIMER = 4,
-    IT_SERIAL = 8,
-    IT_JOYPAD = 16
-  } interrupt_type;
+typedef enum {
+  IT_VBLANK = 1,
+  IT_LCD_STAT = 2,
+  IT_TIMER = 4,
+  IT_SERIAL = 8,
+  IT_JOYPAD = 16
+} interrupt_type;
 
-  typedef enum {
-    FS_TILE,
-    FS_DATA0,
-    FS_DATA1,
-    FS_IDLE,
-    FS_PUSH
+typedef enum {
+  FS_TILE,
+  FS_DATA0,
+  FS_DATA1,
+  FS_IDLE,
+  FS_PUSH
 } fetch_state;
 
 typedef struct {
-    in_type		_type;
-    addr_mode		_mode;
-    reg_type		_reg_1;
-    reg_type		_reg_2;
-    cond_type		_cond;
-    uint8_t 		_param;
+  in_type		_type;
+  addr_mode		_mode;
+  reg_type		_reg_1;
+  reg_type		_reg_2;
+  cond_type		_cond;
+  uint8_t 		_param;
 }		instruction_t;
 
+typedef struct _fifo_entry {
+  struct _fifo_entry *next;
+  uint32_t value; //32 bit color value.
+} fifo_entry;
 
+typedef struct {
+  fifo_entry *head;
+  fifo_entry *tail;
+  uint32_t size;
+} fifo;
 
+typedef struct {
+  fetch_state cur_fetch_state;
+  fifo pixel_fifo;
+  uint8_t line_x;
+  uint8_t pushed_x;
+  uint8_t fetch_x;
+  uint8_t bgw_fetch_data[3];
+  uint8_t fetch_entry_data[6]; //oam data..
+  uint8_t map_y;
+  uint8_t map_x;
+  uint8_t tile_y;
+  uint8_t fifo_x;
+} pixel_fifo_context;
 
+typedef struct {
+  uint8_t y;
+  uint8_t x;
+  uint8_t tile;
+  uint8_t f_cgb_pn : 3;
+  uint8_t f_cgb_vram_bank : 1;
+  uint8_t f_pn : 1;
+  uint8_t f_x_flip : 1;
+  uint8_t f_y_flip : 1;
+  uint8_t f_bgp : 1;
+} oam_entry;
+  
+typedef struct _oam_line_entry {
+  oam_entry entry;
+  struct _oam_line_entry *next;
+} oam_line_entry;
+  
 #pragma once
 typedef struct		s_rom_header{
   uint8_t		entry[4];

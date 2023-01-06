@@ -261,7 +261,6 @@ pbg_instruction::~pbg_instruction()
 
 instruction_t *	pbg_instruction::instruction_by_opcode(uint8_t opcode)
 {
-  // printf("instruction op_code %04X\n", opcode);
   return &(this->_instructions[opcode]);
 }
 

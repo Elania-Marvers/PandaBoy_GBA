@@ -33,9 +33,9 @@ uint8_t pbg_gamepad::gamepad_get_output()
 {
   uint8_t output = 0xCF;
   if (!this->gamepad_button_sel()) {
-    if (this->gamepad_get_state()->start)
+    if (this->gamepad_get_state()->start) // return
       output &= ~(1 << 3);
-    if (this->gamepad_get_state()->select)
+    if (this->gamepad_get_state()->select) // tab
       output &= ~(1 << 2);
     if (this->gamepad_get_state()->a)
       output &= ~(1 << 0);

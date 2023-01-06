@@ -141,39 +141,40 @@ void pbg_ppu::pipeline_load_window_tile()
 
 void pbg_ppu::pipeline_fetch()
 {
-  switch(ppu_get_context()->pfc.cur_fetch_state) {
-  case FS_TILE: {
-    ppu_get_context()->fetched_entry_count = 0;
-    if (LCDC_BGW_ENABLE)
-      {
-	ppu_get_context()->pfc.bgw_fetch_data[0] = this->_context_ptr->_bus_ptr->bus_read(LCDC_BG_MAP_AREA + (ppu_get_context()->pfc.map_x / 8) + (((ppu_get_context()->pfc.map_y / 8)) * 32));
-	if (LCDC_BGW_DATA_AREA == 0x8800)
-	  ppu_get_context()->pfc.bgw_fetch_data[0] += 128;
-	this->pipeline_load_window_tile();
-      }
-    if (LCDC_OBJ_ENABLE && ppu_get_context()->line_sprites) 
-      this->pipeline_load_sprite_tile();
-    ppu_get_context()->pfc.cur_fetch_state = FS_DATA0;
-    ppu_get_context()->pfc.fetch_x += 8;
-  } break;
-  case FS_DATA0: {
-    ppu_get_context()->pfc.bgw_fetch_data[1] = this->_context_ptr->_bus_ptr->bus_read(LCDC_BGW_DATA_AREA + (ppu_get_context()->pfc.bgw_fetch_data[0] * 16) + ppu_get_context()->pfc.tile_y);
-    this->pipeline_load_sprite_data(0);
-    ppu_get_context()->pfc.cur_fetch_state = FS_DATA1;
-  } break;
-  case FS_DATA1: {
-    ppu_get_context()->pfc.bgw_fetch_data[2] = this->_context_ptr->_bus_ptr->bus_read(LCDC_BGW_DATA_AREA + (ppu_get_context()->pfc.bgw_fetch_data[0] * 16) + ppu_get_context()->pfc.tile_y + 1);
-    this->pipeline_load_sprite_data(1);
-    ppu_get_context()->pfc.cur_fetch_state = FS_IDLE;
-  } break;
-  case FS_IDLE: {
-    ppu_get_context()->pfc.cur_fetch_state = FS_PUSH;
-  } break;
-  case FS_PUSH: {
-    if (this->pipeline_fifo_add())
-      ppu_get_context()->pfc.cur_fetch_state = FS_TILE;
-  } break;
-  }
+  switch(ppu_get_context()->pfc.cur_fetch_state) 
+    {
+    case FS_TILE: {
+      ppu_get_context()->fetched_entry_count = 0;
+      if (LCDC_BGW_ENABLE)
+	{
+	  ppu_get_context()->pfc.bgw_fetch_data[0] = this->_context_ptr->_bus_ptr->bus_read(LCDC_BG_MAP_AREA + (ppu_get_context()->pfc.map_x / 8) + (((ppu_get_context()->pfc.map_y / 8)) * 32));
+	  if (LCDC_BGW_DATA_AREA == 0x8800)
+	    ppu_get_context()->pfc.bgw_fetch_data[0] += 128;
+	  this->pipeline_load_window_tile();
+	}
+      if (LCDC_OBJ_ENABLE && ppu_get_context()->line_sprites) 
+	this->pipeline_load_sprite_tile();
+      ppu_get_context()->pfc.cur_fetch_state = FS_DATA0;
+      ppu_get_context()->pfc.fetch_x += 8;
+    } break;
+    case FS_DATA0: {
+      ppu_get_context()->pfc.bgw_fetch_data[1] = this->_context_ptr->_bus_ptr->bus_read(LCDC_BGW_DATA_AREA + (ppu_get_context()->pfc.bgw_fetch_data[0] * 16) + ppu_get_context()->pfc.tile_y);
+      this->pipeline_load_sprite_data(0);
+      ppu_get_context()->pfc.cur_fetch_state = FS_DATA1;
+    } break;
+    case FS_DATA1: {
+      ppu_get_context()->pfc.bgw_fetch_data[2] = this->_context_ptr->_bus_ptr->bus_read(LCDC_BGW_DATA_AREA + (ppu_get_context()->pfc.bgw_fetch_data[0] * 16) + ppu_get_context()->pfc.tile_y + 1);
+      this->pipeline_load_sprite_data(1);
+      ppu_get_context()->pfc.cur_fetch_state = FS_IDLE;
+    } break;
+    case FS_IDLE: {
+      ppu_get_context()->pfc.cur_fetch_state = FS_PUSH;
+    } break;
+    case FS_PUSH: 
+      if (this->pipeline_fifo_add())
+	ppu_get_context()->pfc.cur_fetch_state = FS_TILE;
+      break;
+    }
 }
 
 void pbg_ppu::pipeline_push_pixel()

@@ -1,13 +1,12 @@
 #include "emu.hpp"
+#include <unistd.h>
 
 using namespace pandaboygba;
 
 static gba_emulator *gba_ptr;
-static int toto = 0;
 
 void *cpu_run (void *p)
 {
-  //  int limit = 200000;
   printf("Thread CPU RUN[%d]\n", gba_ptr->_context->_cpu_ptr->_halted);
   while(gba_ptr->getRunning())
     {
@@ -16,8 +15,6 @@ void *cpu_run (void *p)
 	  gba_ptr->getContext()._ui_ptr->delay(10);
 	  continue;
 	}
-
-      //    if (toto <= limit)
       {
 	if (!gba_ptr->getContext()._cpu_ptr->cpu_step())
 	  {
@@ -25,8 +22,6 @@ void *cpu_run (void *p)
 	    return 0;
 	  }
       }
-      //    if (toto <= limit)
-      //  toto++;
     }
   printf("Thread CPU STOP\n");
   return 0;
@@ -51,13 +46,14 @@ int pbg_emu_run (int		argc,
   gba->setRunning();
   gba->set_main_loop(main_loop);
   gba->set_event_loop(event_loop);
-  if (pthread_create(&t1, NULL, cpu_run, NULL)) // replace cpu run by another function 
+  if (pthread_create(&t1, NULL, cpu_run, NULL))
     {
       fprintf(stderr, "FAILED TO START MAIN CPU THREAD!\n");
       return -1;
     }
   while(gba->getRunning())
     {
+      usleep(1000);
       gba->event();
       if (prev_frame != ppu_get_context()->current_frame) 
       	gba->getContext()._ui_ptr->ui_update();
@@ -153,7 +149,6 @@ void gba_emulator::emu_cycles(int cpu_cycles)
 	  this->_context->_ui_ptr->_ticks++;
 	  this->_context->_timer_ptr->timer_tick();
 	  this->_context->_ppu_ptr->ppu_tick();
-	  //  printf("addBR[PPU][%04X]\n", ((uint8_t *) this->_context->_lcd_ptr)[(0xFF00 | this->_context->_cpu_ptr->_fetched_data) - 0xFF40]);
         }
       this->_context->_dma_ptr->dma_tick();
     }

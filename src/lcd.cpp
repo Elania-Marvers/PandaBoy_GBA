@@ -33,7 +33,6 @@ uint8_t pbg_lcd::lcd_read(uint16_t address)
 {
   uint8_t offset = (address - 0xFF40);
   uint8_t *p = (uint8_t *) lcd_ctx;
-  // printf("address[%04X] offset[%04X] p[offset] [%04X]\n", address, offset, p[offset]);
   return p[offset];  
 }
 

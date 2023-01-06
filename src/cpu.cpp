@@ -38,12 +38,6 @@ bool pbg_cpu::cpu_step() {
     this->fetch_instruction();
     this->_context_ptr->_emu_ptr->emu_cycles(1);
     this->fetch_data();
-    /*
-      if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
-      this->_context_ptr->_ui_ptr->_ticks < 986184
-      )
-      printf("CTX FD [%04X]\n", this->_fetched_data);
-    */
 #if CPU_DEBUG == 1
     char flags[16];
     sprintf(flags, "%c%c%c%c", 
@@ -55,9 +49,6 @@ bool pbg_cpu::cpu_step() {
 
     char inst[16];
     this->_context_ptr->_instruction_ptr->inst_to_str(inst);
-    /*    if (this->_context_ptr->_ui_ptr->_ticks > 986000 && 
-	  this->_context_ptr->_ui_ptr->_ticks < 986184
-	  )*/
     printf("%08lX %d - %04X: %-12s (%02X %02X %02X) A: %02X F: %s BC: %02X%02X DE: %02X%02X HL: %02X%02X\n", 
 	   this->_context_ptr->_ui_ptr->_ticks, this->_context_ptr->_ui_ptr->_ticks, 
 	   pc, inst, this->_cur_opcode,

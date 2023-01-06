@@ -5,7 +5,7 @@
 #include "enum.hpp"
 #include "context.hpp"
 #include <stdbool.h>
-#define CPU_DEBUG 1
+#define CPU_DEBUG 0
 #define CPU_FLAG_Z BIT(cpu_get_ctx()->_regs.f, 7)
 #define CPU_FLAG_N BIT(cpu_get_ctx()->_regs.f, 6)
 #define CPU_FLAG_H BIT(cpu_get_ctx()->_regs.f, 5)
@@ -42,21 +42,15 @@ namespace pandaboygba
     t_register *cpu_get_regs();
     void fetch_data();
     void execute();
-    
-
     uint16_t cpu_read_reg(reg_type rt);
     void cpu_set_reg(reg_type rt, uint16_t val);
-
     uint8_t cpu_get_ie_register();
     void cpu_set_ie_register(uint8_t n);
-
     uint8_t cpu_read_reg8(reg_type rt);
     void cpu_set_reg8(reg_type rt, uint8_t val);
-
     uint8_t cpu_get_int_flags();
     void cpu_set_int_flags(uint8_t value);
     void cpu_set_flags(int8_t z, int8_t n, int8_t h, int8_t c);
-
     IN_PROC inst_get_processor(in_type type);
     void inst_to_str(char *str);
 

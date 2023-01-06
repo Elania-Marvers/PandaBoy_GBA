@@ -14,14 +14,10 @@ namespace pandaboygba
     uint8_t		_tima;
     uint8_t		_tma;
     uint8_t		_tac;
-
-
     pbg_timer(pbg_context *);
     void timer_tick();
-
     void timer_write(uint16_t address, uint8_t value);
     uint8_t timer_read(uint16_t address);
-    
     pbg_timer * timer_get_context();
   };
 }
